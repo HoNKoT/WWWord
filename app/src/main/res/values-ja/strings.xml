@@ -1,0 +1,23 @@
+<resources>
+
+    <!--WordEditActivity-->
+    <string name="activity_edit_word_caption_word">単語</string>
+    <string name="activity_edit_word_caption_meaning">意味</string>
+    <string name="activity_edit_word_caption_detail">詳細</string>
+    <string name="activity_edit_word_caption_memo">メモ</string>
+    <string name="activity_edit_word_button_register">登録</string>
+
+    <!--WordListActivity-->
+    <string name="activity_list_word_label">追加/変更</string>
+    <string name="activity_list_word_menu_add">追加</string>
+    <string name="activity_list_word_menu_preference">設定</string>
+
+    <!--PreferenceActivity-->
+    <string name="activity_preference_label">設定</string>
+    <string name="activity_preference_switch_notification_title">定期通知</string>
+    <string name="activity_preference_switch_wakeup">スクリーンOFF中の通知</string>
+    <string name="activity_preference_switch_popup">ポップアップ表示</string>
+    <string name="activity_preference_switch_ring_title">バイブレーション通知</string>
+    <string name="activity_preference_switch_vib_title">サウンド通知</string>
+
+</resources>

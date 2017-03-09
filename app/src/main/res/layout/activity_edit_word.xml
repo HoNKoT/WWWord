@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="word"
+            type="jp.honkot.exercize.basic.wwword.model.Word" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="@dimen/activity_edit_word_caption_width"
+                    android:layout_height="wrap_content"
+                    android:text="@string/activity_edit_word_caption_word" />
+                <EditText
+                    android:id="@+id/wordEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:inputType="text"
+                    android:text="@{word.getWord()}"
+                    android:layout_weight="1"
+                    tools:text="ABCDEFG" />
+                <ImageButton
+                    android:id="@+id/getButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_search_black_24dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="@dimen/activity_edit_word_caption_width"
+                    android:layout_height="wrap_content"
+                    android:text="@string/activity_edit_word_caption_meaning" />
+                <EditText
+                    android:id="@+id/meaningEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{word.getMeaning()}"
+                    tools:text="Basic Alphabet" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="@dimen/activity_edit_word_caption_width"
+                    android:layout_height="wrap_content"
+                    android:text="@string/activity_edit_word_caption_detail" />
+                <EditText
+                    android:id="@+id/detailEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{word.getDetail()}"
+                    tools:text="This is Alphabet" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="@dimen/activity_edit_word_caption_width"
+                    android:layout_height="wrap_content"
+                    android:text="@string/activity_edit_word_caption_memo" />
+                <EditText
+                    android:id="@+id/memoEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{word.getMemo()}"
+                    tools:text="memo\nmemo\nmemo\n" />
+            </LinearLayout>
+        </LinearLayout>
+        <Button
+            android:id="@+id/registerButton"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_edit_word_button_register"/>
+    </LinearLayout>
+</layout>

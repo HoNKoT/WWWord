@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:title="@string/activity_preference_switch_notification_title"
+        android:key="@string/activity_preference_switch_notification_title" />
+    <SwitchPreference
+        android:title="@string/activity_preference_switch_wakeup"
+        android:key="@string/activity_preference_switch_wakeup" />
+    <SwitchPreference
+        android:title="@string/activity_preference_switch_popup"
+        android:key="@string/activity_preference_switch_popup" />
+    <SwitchPreference
+        android:title="@string/activity_preference_switch_vib_title"
+        android:key="@string/activity_preference_switch_vib_title" />
+    <SwitchPreference
+        android:title="@string/activity_preference_switch_ring_title"
+        android:key="@string/activity_preference_switch_ring_title" />
+    <PreferenceCategory
+        android:title="@string/activity_preference_category_etc">
+        <Preference
+            android:title="@string/activity_preference_about"
+            android:key="@string/activity_preference_about" />
+    </PreferenceCategory>
+</PreferenceScreen>

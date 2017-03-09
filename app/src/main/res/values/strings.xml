@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">WWWord</string>
+    <string name="api_base">https://od-api.oxforddictionaries.com/api/v1</string>
+    <string name="api_id">50974be7</string>
+    <string name="api_key">38da4c6505d9dab21093068b480c7097</string>
+
+    <!--WordEditActivity-->
+    <string name="activity_edit_word_caption_word">Word</string>
+    <string name="activity_edit_word_caption_meaning">Meaning</string>
+    <string name="activity_edit_word_caption_detail">Detail</string>
+    <string name="activity_edit_word_caption_memo">Memo</string>
+    <string name="activity_edit_word_button_register">REGISTER</string>
+
+    <!--WordListActivity-->
+    <string name="activity_list_word_label">ADD/EDIT Word</string>
+    <string name="activity_list_word_menu_add">ADD WORD</string>
+    <string name="activity_list_word_menu_preference">PREFERENCE</string>
+
+    <!--PreferenceActivity-->
+    <string name="activity_preference_label">Settings</string>
+    <string name="activity_preference_switch_notification_title">Notification</string>
+    <string name="activity_preference_switch_wakeup">Wake up even screen out</string>
+    <string name="activity_preference_switch_popup">Show up popup</string>
+    <string name="activity_preference_switch_ring_title">with Vibration</string>
+    <string name="activity_preference_switch_vib_title">with Ring</string>
+    <string name="activity_preference_category_etc">Etc</string>
+    <string name="activity_preference_about">About</string>
+
+    <string name="activity_preference_about_copyright">Copyright &#169; 2017 HoNKoT\nAll Rights Reserved.</string>
+
+</resources>
