@@ -162,7 +162,6 @@ public class WordListActivity extends BaseActivity {
 
             if (!mHolderArray.contains(holder)) {
                 mHolderArray.add(holder);
-                Debug.Log("holder array size " + mHolderArray.size());
             }
         }
 
@@ -239,12 +238,7 @@ public class WordListActivity extends BaseActivity {
         }
 
         private void remove(final int position) {
-            orma.transactionNonExclusiveSync(new Runnable() {
-                @Override
-                public void run() {
-                    wordDao.remove(getItemForPosition(position));
-                }
-            });
+            orma.transactionNonExclusiveSync(() -> wordDao.remove(getItemForPosition(position)));
 
             refreshData();
             notifyItemRemoved(position);

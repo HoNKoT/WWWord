@@ -1,7 +1,6 @@
 package jp.honkot.exercize.basic.wwword.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +27,7 @@ import jp.honkot.exercize.basic.wwword.databinding.ActivityEditWordBinding;
 import jp.honkot.exercize.basic.wwword.model.OxfordDictionary;
 import jp.honkot.exercize.basic.wwword.model.Word;
 import jp.honkot.exercize.basic.wwword.util.Debug;
+import jp.honkot.exercize.basic.wwword.util.NetworkUtil;
 
 public class WordEditActivity extends BaseActivity implements View.OnClickListener {
 
@@ -139,15 +139,21 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
 
     private void getByOxfordDic() {
         if (binding.wordEditText.isEnabled()) {
-            String inputWord = binding.wordEditText.getText().toString();
-            mOxfordDictionary = oxfordDictionaryDao.findByWord(inputWord);
+            if (NetworkUtil.isOnline(this)) {
+                String inputWord = binding.wordEditText.getText().toString();
+                mOxfordDictionary = oxfordDictionaryDao.findByWord(inputWord);
 
-            if (mOxfordDictionary == null) {
-                // get by web api
-                Toast.makeText(getApplicationContext(), "Searching...", Toast.LENGTH_SHORT).show();
-                new CallbackTask().execute(dictionaryEntries(), inputWord);
+                if (mOxfordDictionary == null) {
+                    // get by web api
+                    Toast.makeText(getApplicationContext(), R.string.activity_edit_word_toast_searching, Toast.LENGTH_SHORT).show();
+                    new CallbackTask().execute(dictionaryEntries(), inputWord);
+                } else {
+                    showSelectionDialog();
+                }
+
             } else {
-                showSelectionDialog();
+                // offline
+                Toast.makeText(this, R.string.activity_edit_word_toast_offline, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -155,7 +161,8 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
     private String dictionaryEntries() {
         final String language = "en";
         final String word = binding.wordEditText.getText().toString();
-        final String word_id = word.toLowerCase(); //word id is case sensitive and lowercase is required
+        String word_id = word.toLowerCase(); //word id is case sensitive and lowercase is required
+        word_id = word_id.replace(" ", "%20"); // %20 means a space
         return "https://od-api.oxforddictionaries.com:443/api/v1/entries/" + language + "/" + word_id;
     }
 
@@ -169,13 +176,13 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
             final String app_key = "38da4c6505d9dab21093068b480c7097";
             String ret = "";
             if (Debug.isDBG) {
-                Debug.Log("doInBackground start");
+                Debug.Log("doInBackground start " + params[0]);
             }
             try {
                 URL url = new URL(params[0]);
                 HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept","application/json");
-                urlConnection.setRequestProperty("app_id",app_id);
+                urlConnection.setRequestProperty("app_id", app_id);
                 urlConnection.setRequestProperty("app_key",app_key);
 
                 // read the output from the server
@@ -234,15 +241,13 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
     private void showSelectionDialog() {
         if (mOxfordDictionary != null) {
             new AlertDialog.Builder(this)
-                    .setTitle(mWord.getWord())
-                    .setAdapter(new CustomAdapter(mOxfordDictionary.getSimpleDictionaries()), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            OxfordDictionary.SimpleDictionary dic =
-                                    mOxfordDictionary.getSimpleDictionaries().get(which);
-                            binding.meaningEditText.setText(dic.toString());
-                            binding.exampleEditText.setText(dic.example);
-                        }
+                    .setTitle(binding.wordEditText.getText().toString())
+                    .setAdapter(new CustomAdapter(mOxfordDictionary.getSimpleDictionaries()),
+                            (dialog, which) -> {
+                        OxfordDictionary.SimpleDictionary dic =
+                                mOxfordDictionary.getSimpleDictionaries().get(which);
+                        binding.meaningEditText.setText(dic.toString());
+                        binding.exampleEditText.setText(dic.example);
                     })
                     .show();
         }
