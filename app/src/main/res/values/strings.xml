@@ -4,9 +4,14 @@
     <string name="api_id">50974be7</string>
     <string name="api_key">38da4c6505d9dab21093068b480c7097</string>
 
+    <!--Dialog-->
+    <string name="dialog_import_title">Initializing…</string>
+    <string name="dialog_import_done">Done</string>
+
     <!--WordEditActivity-->
     <string name="activity_edit_word_caption_word">Word</string>
     <string name="activity_edit_word_caption_meaning">Meaning</string>
+    <string name="activity_edit_word_caption_example">Example</string>
     <string name="activity_edit_word_caption_detail">Detail</string>
     <string name="activity_edit_word_caption_memo">Memo</string>
     <string name="activity_edit_word_button_register">REGISTER</string>

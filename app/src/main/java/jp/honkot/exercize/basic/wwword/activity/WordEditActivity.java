@@ -116,7 +116,7 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
     private void register() {
         mWord.setWord(binding.wordEditText.getText().toString());
         mWord.setMeaning(binding.meaningEditText.getText().toString());
-        mWord.setDetail(binding.detailEditText.getText().toString());
+        mWord.setExample(binding.detailEditText.getText().toString());
         mWord.setMemo(binding.memoEditText.getText().toString());
 
         // Check the error just in case
@@ -241,7 +241,7 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
                             OxfordDictionary.SimpleDictionary dic =
                                     mOxfordDictionary.getSimpleDictionaries().get(which);
                             binding.meaningEditText.setText(dic.toString());
-                            binding.detailEditText.setText(dic.example);
+                            binding.exampleEditText.setText(dic.example);
                         }
                     })
                     .show();

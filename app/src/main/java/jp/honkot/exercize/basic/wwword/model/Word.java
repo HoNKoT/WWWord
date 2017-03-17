@@ -1,6 +1,7 @@
 package jp.honkot.exercize.basic.wwword.model;
 
-import com.android.annotations.NonNull;
+import android.support.annotation.NonNull;
+
 import com.github.gfx.android.orma.annotation.Column;
 import com.github.gfx.android.orma.annotation.Getter;
 import com.github.gfx.android.orma.annotation.Setter;
@@ -22,6 +23,10 @@ public class Word extends BaseModel {
 
     @Column
     @NonNull
+    private String example;
+
+    @Column
+    @NonNull
     private String detail;
 
     @Column
@@ -35,6 +40,7 @@ public class Word extends BaseModel {
     public Word() {
         this.word = "";
         this.meaning = "";
+        this.example = "";
         this.detail = "";
         this.memo = "";
         this.audioFile = "";
@@ -73,12 +79,23 @@ public class Word extends BaseModel {
     }
 
     @Getter
+    public String getExample() {
+        return example;
+    }
+
+    @Setter
+    public void setExample(String example) {
+        this.example = example;
+    }
+
+    @NonNull
+    @Getter
     public String getDetail() {
         return detail;
     }
 
     @Setter
-    public void setDetail(String detail) {
+    public void setDetail(@NonNull String detail) {
         this.detail = detail;
     }
 
@@ -108,11 +125,12 @@ public class Word extends BaseModel {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("Word{");
+        final StringBuilder sb = new StringBuilder("Word{");
         super.append(sb);
-        sb.append("listId=").append(listId);
+        sb.append(", listId=").append(listId);
         sb.append(", word='").append(word).append('\'');
         sb.append(", meaning='").append(meaning).append('\'');
+        sb.append(", example='").append(example).append('\'');
         sb.append(", detail='").append(detail).append('\'');
         sb.append(", memo='").append(memo).append('\'');
         sb.append(", audioFile='").append(audioFile).append('\'');

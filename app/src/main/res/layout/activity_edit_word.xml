@@ -67,13 +67,28 @@
                 <TextView
                     android:layout_width="@dimen/activity_edit_word_caption_width"
                     android:layout_height="wrap_content"
+                    android:text="@string/activity_edit_word_caption_example" />
+                <EditText
+                    android:id="@+id/exampleEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{word.example}"
+                    tools:text="This is Alphabet" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="@dimen/activity_edit_word_caption_width"
+                    android:layout_height="wrap_content"
                     android:text="@string/activity_edit_word_caption_detail" />
                 <EditText
                     android:id="@+id/detailEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{word.getDetail()}"
-                    tools:text="This is Alphabet" />
+                    android:text="@{word.detail}"
+                    tools:text="Alphabet is a basic letters in English. " />
             </LinearLayout>
 
             <LinearLayout
@@ -88,7 +103,7 @@
                     android:id="@+id/memoEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{word.getMemo()}"
+                    android:text="@{word.memo}"
                     tools:text="memo\nmemo\nmemo\n" />
             </LinearLayout>
         </LinearLayout>

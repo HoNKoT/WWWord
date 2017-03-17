@@ -25,6 +25,11 @@ public class WordDao {
         return orma.relationOfWord();
     }
 
+    public long getMaximumListId() {
+        Long maximumListId = relation().selector().maxByListId();
+        return maximumListId == null ? 0 : maximumListId;
+    }
+
     @Nullable
     public Word findById(long id) {
         return relation().selector().idEq(id).valueOrNull();
@@ -69,7 +74,7 @@ public class WordDao {
                 .idEq(value.getId())
                 .word(value.getWord())
                 .meaning(value.getMeaning())
-                .detail(value.getDetail())
+                .detail(value.getExample())
                 .memo(value.getMemo())
                 .audioFile(value.getAudioFile())
                 .execute();

@@ -39,14 +39,14 @@ public class BaseModel {
         this.status = status;
     }
 
-    protected void append(StringBuffer sb) {
+    protected void append(StringBuilder sb) {
         sb.append("id=").append(id);
         sb.append(", status=").append(status);
     }
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("BaseModel{");
+        final StringBuilder sb = new StringBuilder("BaseModel{");
         sb.append("id=").append(id);
         sb.append(", status=").append(status);
         sb.append('}');

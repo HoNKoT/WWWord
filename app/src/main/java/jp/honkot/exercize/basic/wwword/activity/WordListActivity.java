@@ -1,6 +1,5 @@
 package jp.honkot.exercize.basic.wwword.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -19,8 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.gfx.android.orma.Inserter;
-
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -36,6 +33,8 @@ import jp.honkot.exercize.basic.wwword.model.Word;
 import jp.honkot.exercize.basic.wwword.model.Word_Selector;
 import jp.honkot.exercize.basic.wwword.service.NotificationService;
 import jp.honkot.exercize.basic.wwword.util.Debug;
+import jp.honkot.exercize.basic.wwword.util.ImportCSVUtil;
+import jp.honkot.exercize.basic.wwword.util.SharedPreferenceUtil;
 
 public class WordListActivity extends BaseActivity {
 
@@ -55,6 +54,8 @@ public class WordListActivity extends BaseActivity {
     @Inject
     OrmaDatabase orma;
 
+    ImportCSVUtil importCSVUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,38 +63,7 @@ public class WordListActivity extends BaseActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list_word);
 
-        // For debug
-        if (Debug.isDBG && wordDao.findAll().isEmpty()) {
-            Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    Inserter<Word> sth = orma.prepareInsertIntoWord();
-                    for (int i = 0; i < 50; i++) {
-                        Word word = new Word();
-                        word.setListId(i + 1);
-                        word.setWord("Word #" + i);
-                        word.setMeaning("Meaning #" + i);
-                        word.setDetail("Detail #" + i);
-                        word.setMemo("Memo #" + i);
-                        sth.execute(word);
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            initialize();
-                        }
-                    });
-                }
-            };
-            thread.start();
-
-        } else {
-            initialize();
-        }
-
-        // TODO delete here after all since debug part
         Preference pref = preferenceDao.getPreference();
-        Debug.Log("pref " + pref);
         if (pref == null) {
             // generate initial preference
             Preference newPref = new Preference();
@@ -103,9 +73,23 @@ public class WordListActivity extends BaseActivity {
 
         }
 
-        if (wordDao.findAll().isEmpty()) {
-            Intent intentAdd = new Intent(this, WordEditActivity.class);
-            startActivityForResult(intentAdd, REQUEST_CODE);
+        if (SharedPreferenceUtil.isFirstBoot(this)) {
+            importCSVUtil = new ImportCSVUtil(this, wordDao);
+            importCSVUtil.readCSV(R.raw.testcsv, new ImportCSVUtil.OnReadFinishListener() {
+                @Override
+                public void onError() {
+                    // nothing to do.
+                }
+
+                @Override
+                public void onFinish() {
+                    SharedPreferenceUtil.doneFirstBoot(getApplicationContext());
+                    initialize();
+                }
+            });
+
+        } else {
+            initialize();
         }
     }
 
@@ -140,6 +124,14 @@ public class WordListActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        if (importCSVUtil != null) {
+            importCSVUtil.clear();
+        }
+        super.onDestroy();
+    }
+
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
 
         private Word_Selector selector;
@@ -163,18 +155,10 @@ public class WordListActivity extends BaseActivity {
         public void onBindViewHolder(final MyViewHolder holder, int position) {
             Word item = getItemForPosition(position);
             holder.binding.setWord(item);
-            holder.binding.rowRoot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onRecyclerClicked(holder.binding.getRoot(), holder.getLayoutPosition());
-                }
-            });
-            holder.binding.rowRoot.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    return onRecyclerLongClicked(holder.binding.getRoot(), holder.getLayoutPosition());
-                }
-            });
+            holder.binding.rowRoot.setOnClickListener(
+                    v -> onRecyclerClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
+            holder.binding.rowRoot.setOnLongClickListener(
+                    v -> onRecyclerLongClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
 
             if (!mHolderArray.contains(holder)) {
                 mHolderArray.add(holder);
@@ -216,18 +200,8 @@ public class WordListActivity extends BaseActivity {
             new AlertDialog.Builder(WordListActivity.this)
                     .setTitle("ACTION")
                     .setMessage("Choose menu you want to do")
-                    .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            addItem(position);
-                        }
-                    })
-                    .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            remove(position);
-                        }
-                    })
+                    .setPositiveButton("Add", (dialog, which) -> addItem(position))
+                    .setNegativeButton("Delete", (dialog, which) -> remove(position))
                     .show();
             return true;
         }
@@ -247,7 +221,7 @@ public class WordListActivity extends BaseActivity {
             word.setListId(position + 1);
             word.setWord("Word #" + Integer.toHexString(this.hashCode()));
             word.setMeaning("Meaning #" + Integer.toHexString(this.hashCode()));
-            word.setDetail("Detail #" + Integer.toHexString(this.hashCode()));
+            word.setExample("Detail #" + Integer.toHexString(this.hashCode()));
             word.setMemo("Memo #" + Integer.toHexString(this.hashCode()));
             orma.transactionNonExclusiveSync(new Runnable() {
                 @Override

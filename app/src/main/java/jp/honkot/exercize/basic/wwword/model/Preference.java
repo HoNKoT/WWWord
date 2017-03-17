@@ -90,9 +90,9 @@ public class Preference extends BaseModel {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("Preference{");
+        final StringBuilder sb = new StringBuilder("Preference{");
         super.append(sb);
-        sb.append(", notificationInterval=").append(notificationInterval);
+        sb.append("notificationInterval=").append(notificationInterval);
         sb.append(", wakeup=").append(wakeup);
         sb.append(", popup=").append(popup);
         sb.append(", vib=").append(vib);
