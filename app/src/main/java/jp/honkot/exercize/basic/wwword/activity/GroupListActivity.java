@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -27,15 +26,16 @@ import jp.honkot.exercize.basic.wwword.dao.GroupDao;
 import jp.honkot.exercize.basic.wwword.dao.PreferenceDao;
 import jp.honkot.exercize.basic.wwword.dao.WordDao;
 import jp.honkot.exercize.basic.wwword.databinding.ActivityListWordBinding;
-import jp.honkot.exercize.basic.wwword.databinding.RowWordBinding;
+import jp.honkot.exercize.basic.wwword.databinding.RowGroupBinding;
+import jp.honkot.exercize.basic.wwword.model.Group;
+import jp.honkot.exercize.basic.wwword.model.Group_Selector;
 import jp.honkot.exercize.basic.wwword.model.OrmaDatabase;
 import jp.honkot.exercize.basic.wwword.model.Preference;
-import jp.honkot.exercize.basic.wwword.model.Word;
-import jp.honkot.exercize.basic.wwword.model.Word_Selector;
-import jp.honkot.exercize.basic.wwword.service.NotificationService;
+import jp.honkot.exercize.basic.wwword.util.Debug;
 import jp.honkot.exercize.basic.wwword.util.ImportCSVUtil;
+import jp.honkot.exercize.basic.wwword.util.SharedPreferenceUtil;
 
-public class WordListActivity extends BaseActivity {
+public class GroupListActivity extends BaseActivity {
 
     RecyclerAdapter adapter;
     ActivityListWordBinding binding;
@@ -43,14 +43,12 @@ public class WordListActivity extends BaseActivity {
 
     private static final int REQUEST_CODE = 1;
     public static final int RESULT_SUCCEEDED = 1;
-    public static final String EXTRA_GROUP_ID = "EXTRA_GROUP_ID";
-    private long groupId;
-
-    @Inject
-    WordDao wordDao;
 
     @Inject
     GroupDao groupDao;
+
+    @Inject
+    WordDao wordDao;
 
     @Inject
     PreferenceDao preferenceDao;
@@ -67,23 +65,50 @@ public class WordListActivity extends BaseActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list_word);
 
-        Preference pref = preferenceDao.getPreference();
-        if (pref == null) {
-            // generate initial preference
-            Preference newPref = new Preference();
-            newPref.setNotificationInterval(Preference.DEFAULT_INTERVAL);
-            newPref.setPopup(true);
-            preferenceDao.insert(newPref);
+        // initialize if needed
+        if (SharedPreferenceUtil.isFirstBoot(this)) {
+            // make preference
+            Preference pref = preferenceDao.getPreference();
+            if (pref == null) {
+                // generate initial preference
+                Preference newPref = new Preference();
+                newPref.setNotificationInterval(Preference.DEFAULT_INTERVAL);
+                newPref.setPopup(true);
+                preferenceDao.insert(newPref);
+            }
 
+            // make default group
+            Group group = groupDao.relation().selector().valueOrNull();
+            if (group == null) {
+                group = new Group();
+                group.setListId(1);
+                group.setName("Useful phrasal verbs");
+                group.setNotify(true);
+                long id = groupDao.insert(group);
+                group.setId(id);
+            }
+
+            // make default words
+            importCSVUtil = new ImportCSVUtil(this, wordDao);
+            importCSVUtil.readCSV(R.raw.testcsv, new ImportCSVUtil.OnReadFinishListener() {
+                @Override
+                public void onError() {
+                    // nothing to do.
+                }
+
+                @Override
+                public void onFinish() {
+                    SharedPreferenceUtil.doneFirstBoot(getApplicationContext());
+                    initialize();
+                }
+            }, group);
+
+        } else {
+            initialize();
         }
-
-        initialize();
     }
 
     private void initialize() {
-        groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, 0);
-        getSupportActionBar().setTitle(groupDao.findById(groupId).getName());
-
         adapter = new RecyclerAdapter();
 
         binding.list.setLayoutManager(new LinearLayoutManager(this));
@@ -92,17 +117,6 @@ public class WordListActivity extends BaseActivity {
         // set swipe animation
         itemTouchHelper = new ItemTouchHelper(adapter.getCallback());
         itemTouchHelper.attachToRecyclerView(binding.list);
-
-        // set notification service
-        Preference pref = preferenceDao.getPreference();
-        if (pref != null && pref.isNotify()) {
-            Word_Selector selector = wordDao.findAllByGroupId(groupId);
-            if (!selector.isEmpty()) {
-                NotificationService.startService(this);
-            } else {
-                NotificationService.stopService(this);
-            }
-        }
     }
 
     @Override
@@ -124,31 +138,29 @@ public class WordListActivity extends BaseActivity {
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
 
-        private Word_Selector selector;
+        private Group_Selector selector;
         private int count = 0;
-        private SparseArray<Word> mCash = new SparseArray<>();
+        private SparseArray<Group> mCash = new SparseArray<>();
         private ArrayList<MyViewHolder> mHolderArray = new ArrayList<>();
 
         private RecyclerAdapter() {
-            selector = wordDao.findAllByGroupId(groupId);
+            selector = groupDao.findAll();
             count = selector.count();
         }
 
         @Override
         public RecyclerAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
             LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-            RowWordBinding itemBinding = RowWordBinding.inflate(layoutInflater, parent, false);
+            RowGroupBinding itemBinding = RowGroupBinding.inflate(layoutInflater, parent, false);
             return new MyViewHolder(itemBinding);
         }
 
         @Override
         public void onBindViewHolder(final MyViewHolder holder, int position) {
-            Word item = getItemForPosition(position);
-            holder.binding.setWord(item);
+            Group item = getItemForPosition(position);
+            holder.binding.setGroup(item);
             holder.binding.rowRoot.setOnClickListener(
                     v -> onRecyclerClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
-            holder.binding.rowRoot.setOnLongClickListener(
-                    v -> onRecyclerLongClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
 
             if (!mHolderArray.contains(holder)) {
                 mHolderArray.add(holder);
@@ -165,9 +177,9 @@ public class WordListActivity extends BaseActivity {
         }
 
         @Nullable
-        private Word getItemForPosition(int position) {
+        private Group getItemForPosition(int position) {
             if (position < count) {
-                Word cashWord = mCash.get(position);
+                Group cashWord = mCash.get(position);
                 if (cashWord == null) {
                     cashWord = selector.get(position);
                     mCash.append(position, cashWord);
@@ -180,51 +192,23 @@ public class WordListActivity extends BaseActivity {
         }
 
         private void onRecyclerClicked(View view, int position) {
-            Intent intent = new Intent(getApplicationContext(), WordEditActivity.class);
-            intent.putExtra(WordEditActivity.EXTRA_WORD_ID, getItemForPosition(position).getId());
-            intent.putExtra(WordEditActivity.EXTRA_GROUP_ID, groupId);
+            Intent intent = new Intent(getApplicationContext(), WordListActivity.class);
+            intent.putExtra(WordListActivity.EXTRA_GROUP_ID, getItemForPosition(position).getId());
             startActivity(intent);
-        }
-
-        private boolean onRecyclerLongClicked(View view, final int position) {
-            new AlertDialog.Builder(WordListActivity.this)
-                    .setTitle("ACTION")
-                    .setMessage("Choose menu you want to do")
-                    .setPositiveButton("Add", (dialog, which) -> addItem(position))
-                    .setNegativeButton("Delete", (dialog, which) -> remove(position))
-                    .show();
-            return true;
         }
 
         protected class MyViewHolder extends RecyclerView.ViewHolder {
 
-            private final RowWordBinding binding;
+            private final RowGroupBinding binding;
 
-            private MyViewHolder(RowWordBinding binding) {
+            private MyViewHolder(RowGroupBinding binding) {
                 super(binding.getRoot());
                 this.binding = binding;
             }
         }
 
-        private void addItem(int position) {
-            final Word word = new Word();
-            word.setListId(position + 1);
-            word.setWord("Word #" + Integer.toHexString(this.hashCode()));
-            word.setMeaning("Meaning #" + Integer.toHexString(this.hashCode()));
-            word.setExample("Detail #" + Integer.toHexString(this.hashCode()));
-            word.setMemo("Memo #" + Integer.toHexString(this.hashCode()));
-            orma.transactionNonExclusiveSync(() -> wordDao.insert(word));
-
-            refreshData();
-            notifyItemInserted(position);
-
-            // The database selector does not change soon,
-            // so the time to sync display info should be delayed just a second.
-            mHandler.sendEmptyMessageDelayed(MEG_CHANGE_DISPLAY_LISTID, 500);
-        }
-
         private void remove(final int position) {
-            orma.transactionNonExclusiveSync(() -> wordDao.remove(getItemForPosition(position)));
+            orma.transactionNonExclusiveSync(() -> groupDao.remove(getItemForPosition(position)));
 
             refreshData();
             notifyItemRemoved(position);
@@ -235,7 +219,7 @@ public class WordListActivity extends BaseActivity {
         }
 
         private void refreshData() {
-            selector = wordDao.findAllByGroupId(groupId);
+            selector = groupDao.findAll();
             count = selector.count();
             mCash.clear();
         }
@@ -243,11 +227,12 @@ public class WordListActivity extends BaseActivity {
         private void refreshListId() {
             for (MyViewHolder holder : mHolderArray) {
                 int position = holder.getLayoutPosition();
+                Debug.Log("refreshListId " + position);
                 if (position >= 0) {
-                    Word word = getItemForPosition(position);
-                    if (word != null) {
+                    Group group = getItemForPosition(position);
+                    if (group != null) {
                         holder.binding.rowListId.setText(
-                                word.getDisplayListId());
+                                group.getDisplayListId());
                     }
                 }
             }
@@ -298,8 +283,7 @@ public class WordListActivity extends BaseActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent intentAdd = new Intent(this, WordEditActivity.class);
-                intentAdd.putExtra(WordEditActivity.EXTRA_GROUP_ID, groupId);
+                Intent intentAdd = new Intent(this, GroupEditActivity.class);
                 startActivityForResult(intentAdd, REQUEST_CODE);
                 return true;
 

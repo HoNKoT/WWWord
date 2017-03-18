@@ -6,6 +6,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.gfx.android.orma.SingleAssociation;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +21,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import jp.honkot.exercize.basic.wwword.R;
 import jp.honkot.exercize.basic.wwword.dao.WordDao;
+import jp.honkot.exercize.basic.wwword.model.Group;
 import jp.honkot.exercize.basic.wwword.model.Word;
 
 /**
@@ -41,7 +44,7 @@ public class ImportCSVUtil {
         mWordDao = wordDao;
     }
 
-    public void readCSV(final int resId, final OnReadFinishListener listener) {
+    public void readCSV(final int resId, final OnReadFinishListener listener, final Group group) {
 
         final ProgressDialog.Builder builder = new ProgressDialog.Builder(mContext);
         builder.setTitle(R.string.dialog_import_title);
@@ -50,7 +53,7 @@ public class ImportCSVUtil {
         // Here is observable what doing in background.
         Observable<String> observable = Observable.create((ObservableEmitter<String> emitter) -> {
             try {
-                innerReadCSV(resId);
+                innerReadCSV(resId, group);
                 emitter.onNext("Done");
 
             } catch (Exception e) {
@@ -93,12 +96,12 @@ public class ImportCSVUtil {
                 }));
     }
 
-    private void innerReadCSV(int resId) {
+    private void innerReadCSV(final int resId, final Group group) {
         //this requires there to be a dictionary.csv file in the raw directory
         //in this case you can swap in whatever you want
-        InputStream inputStream = mContext.getResources().openRawResource(resId);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        long startListId = mWordDao.getMaximumListId() + 1;
+        final InputStream inputStream = mContext.getResources().openRawResource(resId);
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        long startListId = mWordDao.getMaximumListId(group) + 1;
 
         try {
             String word;
@@ -119,6 +122,7 @@ public class ImportCSVUtil {
                 if (words.length > 1) newWord.setMeaning(words[1]);
                 if (words.length > 2) newWord.setExample(words[2]);
                 newWord.setListId(startListId++);
+                newWord.setGroup(SingleAssociation.just(group));
                 mWordDao.insert(newWord);
 
                 if (Debug.isDBG) {

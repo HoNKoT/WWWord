@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="group" type="jp.honkot.exercize.basic.wwword.model.Group"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/word_card_vertical_margin"
+        android:layout_marginBottom="@dimen/word_card_vertical_margin"
+        android:layout_marginLeft="@dimen/word_card_horizontal_margin"
+        android:layout_marginRight="@dimen/word_card_horizontal_margin"
+        android:background="@drawable/divider">
+        <LinearLayout
+            android:id="@+id/rowRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:background="?android:attr/selectableItemBackground">
+            <TextView
+                android:id="@+id/rowListId"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@{group.displayListId}" />
+            <TextView
+                android:id="@+id/rowName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@{group.name}" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

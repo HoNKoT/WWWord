@@ -217,7 +217,7 @@ public class NotificationService extends Service {
     }
 
     private void showWord() {
-        Word_Selector relation = wordDao.findAll();
+        Word_Selector relation = wordDao.findAllOfNeedNotify();
 
         if (relation.isEmpty()) {
             Random random = new Random(System.currentTimeMillis());

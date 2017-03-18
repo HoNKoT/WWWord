@@ -8,6 +8,10 @@
     <string name="dialog_import_title">Initializing…</string>
     <string name="dialog_import_done">Done</string>
 
+    <!--GroupEditActivity-->
+    <string name="activity_edit_group_label">ADD/EDIT Group</string>
+    <string name="activity_edit_group_caption_name">Name</string>
+
     <!--WordEditActivity-->
     <string name="activity_edit_word_caption_word">Word</string>
     <string name="activity_edit_word_caption_meaning">Meaning</string>

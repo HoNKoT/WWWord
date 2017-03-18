@@ -2,6 +2,7 @@ package jp.honkot.exercize.basic.wwword.model;
 
 import android.support.annotation.NonNull;
 
+import com.github.gfx.android.orma.SingleAssociation;
 import com.github.gfx.android.orma.annotation.Column;
 import com.github.gfx.android.orma.annotation.Getter;
 import com.github.gfx.android.orma.annotation.Setter;
@@ -12,6 +13,10 @@ public class Word extends BaseModel {
 
     @Column(indexed = true)
     private long listId;
+
+    @Column(indexed = true, defaultExpr = "1")
+    @NonNull
+    private SingleAssociation<Group> group;
 
     @Column
     @NonNull
@@ -56,6 +61,17 @@ public class Word extends BaseModel {
     @Setter
     public void setListId(long listId) {
         this.listId = listId;
+    }
+
+    @NonNull
+    @Getter
+    public SingleAssociation<Group> getGroup() {
+        return group;
+    }
+
+    @Setter
+    public void setGroup(@NonNull SingleAssociation<Group> group) {
+        this.group = group;
     }
 
     @Getter
@@ -128,6 +144,7 @@ public class Word extends BaseModel {
         final StringBuilder sb = new StringBuilder("Word{");
         super.append(sb);
         sb.append(", listId=").append(listId);
+        sb.append(", group=").append(group);
         sb.append(", word='").append(word).append('\'');
         sb.append(", meaning='").append(meaning).append('\'');
         sb.append(", example='").append(example).append('\'');

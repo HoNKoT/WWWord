@@ -12,6 +12,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gfx.android.orma.SingleAssociation;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -21,9 +23,11 @@ import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 
 import jp.honkot.exercize.basic.wwword.R;
+import jp.honkot.exercize.basic.wwword.dao.GroupDao;
 import jp.honkot.exercize.basic.wwword.dao.OxfordDictionaryDao;
 import jp.honkot.exercize.basic.wwword.dao.WordDao;
 import jp.honkot.exercize.basic.wwword.databinding.ActivityEditWordBinding;
+import jp.honkot.exercize.basic.wwword.model.Group;
 import jp.honkot.exercize.basic.wwword.model.OxfordDictionary;
 import jp.honkot.exercize.basic.wwword.model.Word;
 import jp.honkot.exercize.basic.wwword.util.Debug;
@@ -32,12 +36,17 @@ import jp.honkot.exercize.basic.wwword.util.NetworkUtil;
 public class WordEditActivity extends BaseActivity implements View.OnClickListener {
 
     public static final String EXTRA_WORD_ID = "EXTRA_WORD_ID";
+    public static final String EXTRA_GROUP_ID = "EXTRA_GROUP_ID";
     private ActivityEditWordBinding binding;
     private Word mWord;
     private OxfordDictionary mOxfordDictionary;
+    private Group mGroup;
 
     @Inject
     WordDao wordDao;
+
+    @Inject
+    GroupDao groupDao;
 
     @Inject
     OxfordDictionaryDao oxfordDictionaryDao;
@@ -53,15 +62,19 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
 
     private void initialize() {
         // Get and set initial values
-        long id = getIntent().getLongExtra(EXTRA_WORD_ID, 0);
-        if (id != 0) {
-            mWord = wordDao.findById(id);
+        long wordId = getIntent().getLongExtra(EXTRA_WORD_ID, 0);
+        if (wordId != 0) {
+            mWord = wordDao.findById(wordId);
         }
         if (mWord == null) {
             mWord = new Word();
         }
         binding.setWord(mWord);
         updateButtonState();
+
+        // Get related group id
+        long groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, 0);
+        mGroup = groupDao.findById(groupId);
 
         // Set some listeners
         binding.wordEditText.addTextChangedListener(mTextWatcher);
@@ -114,10 +127,12 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void register() {
+        mWord.setListId(wordDao.getMaximumListId(mGroup) + 1);
         mWord.setWord(binding.wordEditText.getText().toString());
         mWord.setMeaning(binding.meaningEditText.getText().toString());
         mWord.setExample(binding.detailEditText.getText().toString());
         mWord.setMemo(binding.memoEditText.getText().toString());
+        mWord.setGroup(SingleAssociation.just(mGroup));
 
         // Check the error just in case
         if (mWord.allowRegister()) {

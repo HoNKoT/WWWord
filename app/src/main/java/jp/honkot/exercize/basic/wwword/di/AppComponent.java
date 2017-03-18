@@ -5,6 +5,8 @@ import android.app.Application;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import jp.honkot.exercize.basic.wwword.activity.GroupEditActivity;
+import jp.honkot.exercize.basic.wwword.activity.GroupListActivity;
 import jp.honkot.exercize.basic.wwword.activity.PreferenceActivity;
 import jp.honkot.exercize.basic.wwword.activity.WordEditActivity;
 import jp.honkot.exercize.basic.wwword.activity.WordListActivity;
@@ -15,6 +17,10 @@ import jp.honkot.exercize.basic.wwword.service.NotificationService;
 @Component(modules = AppModule.class)
 public interface AppComponent {
     void inject(Application application);
+
+    void inject(GroupEditActivity activity);
+
+    void inject(GroupListActivity activity);
 
     void inject(WordEditActivity activity);
 
