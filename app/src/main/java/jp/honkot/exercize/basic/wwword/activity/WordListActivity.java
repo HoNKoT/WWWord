@@ -223,7 +223,7 @@ public class WordListActivity extends BaseActivity {
             mHandler.sendEmptyMessageDelayed(MEG_CHANGE_DISPLAY_LISTID, 500);
         }
 
-        private void remove(final int position) {
+        public void remove(final int position) {
             orma.transactionNonExclusiveSync(() -> wordDao.remove(getItemForPosition(position)));
 
             refreshData();
@@ -265,10 +265,21 @@ public class WordListActivity extends BaseActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-                // 横にスワイプされたら要素を消す
-                int swipedPosition = viewHolder.getAdapterPosition();
-                remove(swipedPosition);
+                new AlertDialog.Builder(WordListActivity.this)
+                        .setTitle("CONFIRM")
+                        .setMessage("Are you sure what you want to delete?")
+                        .setPositiveButton("DELETE",
+                                (dialog1, which) -> {
+                            int swipedPosition = viewHolder.getAdapterPosition();
+                            remove(swipedPosition);
+                        })
+                        .setNegativeButton("CANCEL",
+                                (dialog12, which) -> {
+                            // nothing to do
+                            notifyDataSetChanged();
+                                    callback.
+                        })
+                        .show();
             }
         };
 

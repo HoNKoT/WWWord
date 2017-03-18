@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -250,10 +251,21 @@ public class GroupListActivity extends BaseActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-
-                // 横にスワイプされたら要素を消す
-                int swipedPosition = viewHolder.getAdapterPosition();
-                remove(swipedPosition);
+                new AlertDialog.Builder(GroupListActivity.this)
+                        .setTitle("CONFIRM")
+                        .setMessage("Are you sure what you want to delete?")
+                        .setPositiveButton("DELETE",
+                                (dialog1, which) -> {
+                                    int swipedPosition = viewHolder.getAdapterPosition();
+                                    remove(swipedPosition);
+                                })
+                        .setNegativeButton("CANCEL",
+                                (dialog12, which) -> {
+                                    // nothing to do
+                                    notifyDataSetChanged();
+                                    callback.
+                                })
+                        .show();
             }
         };
 
