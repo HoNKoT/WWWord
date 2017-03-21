@@ -263,7 +263,6 @@ public class GroupListActivity extends BaseActivity {
                                 (dialog12, which) -> {
                                     // nothing to do
                                     notifyDataSetChanged();
-                                    callback.
                                 })
                         .show();
             }

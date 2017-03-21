@@ -59,9 +59,16 @@ public class GroupDao {
         c.moveToFirst();
         c.close();
 
-        return relation().deleter()
+        long ret = relation().deleter()
                 .idEq(value.getId())
                 .execute();
+
+        // delete child
+        ret += orma.relationOfWord().deleter()
+                .groupEq(value)
+                .execute();
+
+        return ret;
     }
 
     public long update(final Group value) {
