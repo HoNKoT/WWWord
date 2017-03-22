@@ -1,6 +1,9 @@
 package jp.honkot.exercize.basic.wwword.activity;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
@@ -81,6 +84,12 @@ public class PreferenceActivity extends BaseActivity {
                             R.string.activity_preference_switch_ring_title));
             ringPref.setChecked(mPref.isRing());
             ringPref.setOnPreferenceChangeListener(ringClickListener);
+
+            findPreference(getString(R.string.activity_preference_libs))
+                    .setOnPreferenceClickListener(libsClickListener);
+
+            findPreference(getString(R.string.activity_preference_apps))
+                    .setOnPreferenceClickListener(appsClickListener);
 
             findPreference(getString(R.string.activity_preference_about))
                     .setOnPreferenceClickListener(aboutClickListener);
@@ -187,15 +196,26 @@ public class PreferenceActivity extends BaseActivity {
                     }
                 };
 
-        private android.preference.Preference.OnPreferenceClickListener aboutClickListener =
-                new android.preference.Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(android.preference.Preference preference) {
-                        new AlertDialog.Builder(getActivity())
-                                .setView(getActivity().getLayoutInflater().inflate(R.layout.about, null))
-                                .show();
-                        return false;
+        private android.preference.Preference.OnPreferenceClickListener libsClickListener =
+                preference -> {
+                    startActivity(new Intent(getActivity(), LibsActivity.class));
+                    return false;
+                };
+
+        private android.preference.Preference.OnPreferenceClickListener appsClickListener =
+                preference -> {
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=honkot")));
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=honkot")));
                     }
+                    return false;
+                };
+
+        private android.preference.Preference.OnPreferenceClickListener aboutClickListener =
+                preference -> {
+                    startActivity(new Intent(getActivity(), AboutActivity.class));
+                    return false;
                 };
     }
 }

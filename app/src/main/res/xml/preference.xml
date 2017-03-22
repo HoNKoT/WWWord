@@ -20,6 +20,12 @@
     <PreferenceCategory
         android:title="@string/activity_preference_category_etc">
         <Preference
+            android:title="@string/activity_preference_libs"
+            android:key="@string/activity_preference_libs" />
+        <Preference
+            android:title="@string/activity_preference_apps"
+            android:key="@string/activity_preference_apps" />
+        <Preference
             android:title="@string/activity_preference_about"
             android:key="@string/activity_preference_about" />
     </PreferenceCategory>

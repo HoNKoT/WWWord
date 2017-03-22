@@ -13,17 +13,18 @@
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.GroupListActivity">
+        <activity android:name=".activity.GroupListActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.WordListActivity" />
-        <activity android:name=".activity.GroupEditActivity" />
-        <activity android:name=".activity.WordEditActivity" />
-        <activity android:name=".activity.PreferenceActivity" />
+        <activity android:name=".activity.WordListActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activity.GroupEditActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activity.WordEditActivity" android:screenOrientation="portrait" />
+        <activity android:name=".activity.PreferenceActivity" android:screenOrientation="portrait" />
         <service
             android:name=".service.NotificationService"
             android:enabled="true"
@@ -38,6 +39,16 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".activity.AboutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent"/>
+
+        <activity
+            android:name=".activity.LibsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent"/>
     </application>
 
 </manifest>

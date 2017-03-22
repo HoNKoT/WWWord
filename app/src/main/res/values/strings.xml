@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">WWWord</string>
     <string name="api_base">https://od-api.oxforddictionaries.com/api/v1</string>
     <string name="api_id">50974be7</string>
     <string name="api_key">38da4c6505d9dab21093068b480c7097</string>
@@ -46,6 +45,8 @@
     <string name="activity_preference_switch_ring_title">with Vibration</string>
     <string name="activity_preference_switch_vib_title">with Ring</string>
     <string name="activity_preference_category_etc">Etc</string>
+    <string name="activity_preference_libs">Using libraries</string>
+    <string name="activity_preference_apps">Other Apps</string>
     <string name="activity_preference_about">About</string>
 
     <string name="activity_preference_about_copyright">Copyright &#169; 2017 HoNKoT\nAll Rights Reserved.</string>
