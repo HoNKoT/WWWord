@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import jp.honkot.exercize.basic.wwword.BaseApplication;
 import jp.honkot.exercize.basic.wwword.R;
+import jp.honkot.exercize.basic.wwword.activity.GroupListActivity;
 import jp.honkot.exercize.basic.wwword.activity.WordEditActivity;
 import jp.honkot.exercize.basic.wwword.activity.WordListActivity;
 import jp.honkot.exercize.basic.wwword.dao.PreferenceDao;
@@ -107,7 +108,7 @@ public class NotificationService extends Service {
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
         Notification notification;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            Intent intent = new Intent(this, WordListActivity.class);
+            Intent intent = new Intent(this, GroupListActivity.class);
             PendingIntent contentIntent = PendingIntent.getActivity(
                     this, 0, intent, 0);
 
@@ -128,7 +129,7 @@ public class NotificationService extends Service {
             Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             builder.setLargeIcon(bm);
 
-            Intent intent = new Intent(this, WordListActivity.class);
+            Intent intent = new Intent(this, GroupListActivity.class);
             PendingIntent contentIntent = PendingIntent.getActivity(
                     this, 0, intent, 0);
             builder.setContentIntent(contentIntent);

@@ -42,8 +42,8 @@
     <string name="activity_preference_switch_notification_title">Notification</string>
     <string name="activity_preference_switch_wakeup">Wake up even screen out</string>
     <string name="activity_preference_switch_popup">Show up popup</string>
-    <string name="activity_preference_switch_ring_title">with Vibration</string>
-    <string name="activity_preference_switch_vib_title">with Ring</string>
+    <string name="activity_preference_switch_ring_title">with Ring</string>
+    <string name="activity_preference_switch_vib_title">with Vibration</string>
     <string name="activity_preference_category_etc">Etc</string>
     <string name="activity_preference_libs">Using libraries</string>
     <string name="activity_preference_apps">Other Apps</string>

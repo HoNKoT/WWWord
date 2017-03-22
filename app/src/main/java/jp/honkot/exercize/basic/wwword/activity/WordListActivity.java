@@ -86,7 +86,6 @@ public class WordListActivity extends BaseActivity {
 
     private void initialize() {
         groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, 0);
-        getSupportActionBar().setTitle(groupDao.findById(groupId).getName());
 
         adapter = new RecyclerAdapter();
 

@@ -1,23 +1,51 @@
 <resources>
+    <string name="api_base">https://od-api.oxforddictionaries.com/api/v1</string>
+    <string name="api_id">50974be7</string>
+    <string name="api_key">38da4c6505d9dab21093068b480c7097</string>
+
+    <!--Notification-->
+    <string name="notify_action_title">クイズ：「%s」の意味は？</string>
+    <string name="notify_action_check_list">リスト</string>
+    <string name="notify_action_check_word">単語</string>
+
+    <!--Dialog-->
+    <string name="dialog_import_title">初期化中</string>
+    <string name="dialog_import_done">完了</string>
+
+    <!--GroupListActivity-->
+    <string name="activity_list_group_label">単語帳リスト</string>
+
+    <!--GroupEditActivity-->
+    <string name="activity_edit_group_label_add">単語帳作成</string>
+    <string name="activity_edit_group_label_edit">編集：%s</string>
+    <string name="activity_edit_group_caption_name">単語帳名</string>
 
     <!--WordEditActivity-->
+    <string name="activity_edit_word_label_add">新規登録 [%s]</string>
+    <string name="activity_edit_word_label_edit">編集</string>
     <string name="activity_edit_word_caption_word">単語</string>
     <string name="activity_edit_word_caption_meaning">意味</string>
+    <string name="activity_edit_word_caption_example">例文</string>
     <string name="activity_edit_word_caption_detail">詳細</string>
     <string name="activity_edit_word_caption_memo">メモ</string>
+    <string name="activity_edit_word_toast_searching">検索中（英英）…</string>
+    <string name="activity_edit_word_toast_offline">ネット環境をご確認ください</string>
     <string name="activity_edit_word_button_register">登録</string>
 
     <!--WordListActivity-->
-    <string name="activity_list_word_label">追加/変更</string>
+    <string name="activity_list_word_label">%s</string>
     <string name="activity_list_word_menu_add">追加</string>
     <string name="activity_list_word_menu_preference">設定</string>
 
     <!--PreferenceActivity-->
     <string name="activity_preference_label">設定</string>
-    <string name="activity_preference_switch_notification_title">定期通知</string>
-    <string name="activity_preference_switch_wakeup">スクリーンOFF中の通知</string>
-    <string name="activity_preference_switch_popup">ポップアップ表示</string>
-    <string name="activity_preference_switch_ring_title">バイブレーション通知</string>
-    <string name="activity_preference_switch_vib_title">サウンド通知</string>
+    <string name="activity_preference_switch_notification_title">定期的に通知</string>
+    <string name="activity_preference_switch_wakeup">スクリーンOFF中も通知（非推奨）</string>
+    <string name="activity_preference_switch_popup">ヘッドアップ通知</string>
+    <string name="activity_preference_switch_ring_title">音で通知</string>
+    <string name="activity_preference_switch_vib_title">バイブレーション通知</string>
+    <string name="activity_preference_category_etc">その他</string>
+
+    <string name="activity_preference_about_copyright">Copyright &#169; 2017 HoNKoT\nAll Rights Reserved.</string>
 
 </resources>

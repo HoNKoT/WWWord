@@ -79,11 +79,11 @@ public class PreferenceActivity extends BaseActivity {
             vibPref.setChecked(mPref.isVib());
             vibPref.setOnPreferenceChangeListener(vibClickListener);
 
-            SwitchPreference ringPref =
-                    (SwitchPreference)findPreference(getString(
-                            R.string.activity_preference_switch_ring_title));
-            ringPref.setChecked(mPref.isRing());
-            ringPref.setOnPreferenceChangeListener(ringClickListener);
+//            SwitchPreference ringPref =
+//                    (SwitchPreference)findPreference(getString(
+//                            R.string.activity_preference_switch_ring_title));
+//            ringPref.setChecked(mPref.isRing());
+//            ringPref.setOnPreferenceChangeListener(ringClickListener);
 
             findPreference(getString(R.string.activity_preference_libs))
                     .setOnPreferenceClickListener(libsClickListener);
@@ -106,7 +106,7 @@ public class PreferenceActivity extends BaseActivity {
             findPreference(getString(R.string.activity_preference_switch_wakeup)).setEnabled(mPref.isNotify());
             findPreference(getString(R.string.activity_preference_switch_popup)).setEnabled(mPref.isNotify());
             findPreference(getString(R.string.activity_preference_switch_vib_title)).setEnabled(mPref.isNotify() && mPref.isPopup());
-            findPreference(getString(R.string.activity_preference_switch_ring_title)).setEnabled(mPref.isNotify() && mPref.isPopup());
+//            findPreference(getString(R.string.activity_preference_switch_ring_title)).setEnabled(mPref.isNotify() && mPref.isPopup());
         }
 
         private android.preference.Preference.OnPreferenceChangeListener notificationIntervalClickListener =

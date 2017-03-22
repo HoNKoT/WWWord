@@ -11,12 +11,12 @@
     <SwitchPreference
         android:title="@string/activity_preference_switch_popup"
         android:key="@string/activity_preference_switch_popup" />
+    <!--<SwitchPreference-->
+        <!--android:title="@string/activity_preference_switch_ring_title"-->
+        <!--android:key="@string/activity_preference_switch_ring_title" />-->
     <SwitchPreference
         android:title="@string/activity_preference_switch_vib_title"
         android:key="@string/activity_preference_switch_vib_title" />
-    <SwitchPreference
-        android:title="@string/activity_preference_switch_ring_title"
-        android:key="@string/activity_preference_switch_ring_title" />
     <PreferenceCategory
         android:title="@string/activity_preference_category_etc">
         <Preference
