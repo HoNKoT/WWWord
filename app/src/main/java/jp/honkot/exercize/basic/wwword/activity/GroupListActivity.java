@@ -32,6 +32,7 @@ import jp.honkot.exercize.basic.wwword.model.Group;
 import jp.honkot.exercize.basic.wwword.model.Group_Selector;
 import jp.honkot.exercize.basic.wwword.model.OrmaDatabase;
 import jp.honkot.exercize.basic.wwword.model.Preference;
+import jp.honkot.exercize.basic.wwword.util.CheckPermissionUtil;
 import jp.honkot.exercize.basic.wwword.util.Debug;
 import jp.honkot.exercize.basic.wwword.util.ImportCSVUtil;
 import jp.honkot.exercize.basic.wwword.util.SharedPreferenceUtil;
@@ -42,8 +43,7 @@ public class GroupListActivity extends BaseActivity {
     ActivityListGroupBinding binding;
     ItemTouchHelper itemTouchHelper;
 
-    private static final int REQUEST_CODE = 1;
-    public static final int RESULT_SUCCEEDED = 1;
+    private static final int REQUEST_CODE_ADD = 1;
 
     @Inject
     GroupDao groupDao;
@@ -63,6 +63,8 @@ public class GroupListActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getComponent().inject(this);
+
+        CheckPermissionUtil.checkPermission(this);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list_group);
 
@@ -128,7 +130,7 @@ public class GroupListActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK) {
             initialize();
         }
     }
@@ -299,7 +301,7 @@ public class GroupListActivity extends BaseActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_add:
-                startActivity(GroupEditActivity.createIntent(this));
+                startActivityForResult(GroupEditActivity.createIntent(this), REQUEST_CODE_ADD);
                 return true;
 
             case R.id.menu_preference:

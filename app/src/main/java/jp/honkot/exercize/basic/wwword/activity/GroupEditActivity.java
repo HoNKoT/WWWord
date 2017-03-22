@@ -109,7 +109,7 @@ public class GroupEditActivity extends BaseActivity implements View.OnClickListe
                 result = groupDao.update(mGroup);
             }
 
-            if (result != 0) {
+            if (result > 0) {
                 setResult(RESULT_OK);
                 finish();
             } else {
