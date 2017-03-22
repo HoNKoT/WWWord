@@ -24,7 +24,6 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import jp.honkot.exercize.basic.wwword.BaseApplication;
-import jp.honkot.exercize.basic.wwword.BuildConfig;
 import jp.honkot.exercize.basic.wwword.R;
 import jp.honkot.exercize.basic.wwword.activity.WordEditActivity;
 import jp.honkot.exercize.basic.wwword.activity.WordListActivity;
@@ -43,7 +42,7 @@ public class NotificationService extends Service {
     private static int NOTIFY_ID = 777;
     private PendingIntent alarmIntent;
     private long mLastAlertSetTime = 0;
-    private static boolean isServiceDebug = BuildConfig.DEBUG && true;
+    private static boolean isServiceDebug = false;
 
     private static boolean working = false;
 

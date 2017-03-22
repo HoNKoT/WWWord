@@ -50,6 +50,16 @@ public class GroupEditActivity extends BaseActivity implements View.OnClickListe
         // Set some listeners
         binding.nameEditText.addTextChangedListener(mTextWatcher);
         binding.registerButton.setOnClickListener(this);
+
+        // Set Action bar title
+        if (mGroup.getId() > 0) {
+            getSupportActionBar().setTitle(
+                    getString(R.string.activity_edit_group_label_edit, mGroup.getName()));
+        } else {
+            getSupportActionBar().setTitle(
+                    getString(R.string.activity_edit_group_label_add));
+
+        }
     }
 
     private void updateButtonState() {

@@ -118,6 +118,10 @@ public class GroupListActivity extends BaseActivity {
         // set swipe animation
         itemTouchHelper = new ItemTouchHelper(adapter.getCallback());
         itemTouchHelper.attachToRecyclerView(binding.list);
+
+        // Set Action bar title
+        getSupportActionBar().setTitle(
+                getString(R.string.activity_list_group_label));
     }
 
     @Override
@@ -160,6 +164,7 @@ public class GroupListActivity extends BaseActivity {
         public void onBindViewHolder(final MyViewHolder holder, int position) {
             Group item = getItemForPosition(position);
             holder.binding.setGroup(item);
+            holder.binding.rowListId.setVisibility(Debug.isDBG ? View.VISIBLE : View.GONE);
             holder.binding.rowRoot.setOnClickListener(
                     v -> onRecyclerClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
 

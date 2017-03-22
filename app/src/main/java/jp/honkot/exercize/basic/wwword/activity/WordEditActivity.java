@@ -90,6 +90,16 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
         if (!mWord.getWord().isEmpty()) {
             mOxfordDictionary = oxfordDictionaryDao.findByWord(mWord.getWord());
         }
+
+        // Set Action bar title
+        if (mWord.getId() > 0) {
+            getSupportActionBar().setTitle(
+                    getString(R.string.activity_edit_word_label_edit));
+        } else {
+            getSupportActionBar().setTitle(
+                    getString(R.string.activity_edit_word_label_add, mGroup.getName()));
+
+        }
     }
 
     private void updateButtonState() {

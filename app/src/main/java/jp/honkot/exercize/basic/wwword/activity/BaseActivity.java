@@ -21,9 +21,9 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!calledUpdateActionBar) {
-            updateActionBar(null, null);
-        }
+//        if (!calledUpdateActionBar) {
+//            updateActionBar(null, null);
+//        }
     }
 
     @NonNull

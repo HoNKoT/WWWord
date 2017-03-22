@@ -23,6 +23,10 @@ public class PreferenceActivity extends BaseActivity {
 
         getFragmentManager().beginTransaction().replace(
                 android.R.id.content, new MySettingFragment()).commit();
+
+        // Set Action bar title
+        getSupportActionBar().setTitle(
+                getString(R.string.activity_preference_label));
     }
 
     public static class MySettingFragment extends PreferenceFragment {

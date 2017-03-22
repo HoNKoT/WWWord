@@ -29,11 +29,13 @@ import jp.honkot.exercize.basic.wwword.dao.PreferenceDao;
 import jp.honkot.exercize.basic.wwword.dao.WordDao;
 import jp.honkot.exercize.basic.wwword.databinding.ActivityListWordBinding;
 import jp.honkot.exercize.basic.wwword.databinding.RowWordBinding;
+import jp.honkot.exercize.basic.wwword.model.Group;
 import jp.honkot.exercize.basic.wwword.model.OrmaDatabase;
 import jp.honkot.exercize.basic.wwword.model.Preference;
 import jp.honkot.exercize.basic.wwword.model.Word;
 import jp.honkot.exercize.basic.wwword.model.Word_Selector;
 import jp.honkot.exercize.basic.wwword.service.NotificationService;
+import jp.honkot.exercize.basic.wwword.util.Debug;
 import jp.honkot.exercize.basic.wwword.util.ImportCSVUtil;
 
 public class WordListActivity extends BaseActivity {
@@ -111,6 +113,13 @@ public class WordListActivity extends BaseActivity {
                 NotificationService.stopService(this);
             }
         }
+
+        // Set Action bar title
+        Group group = groupDao.findById(groupId);
+        if (group != null) {
+            getSupportActionBar().setTitle(
+                    getString(R.string.activity_list_word_label, group.getName()));
+        }
     }
 
     @Override
@@ -153,10 +162,13 @@ public class WordListActivity extends BaseActivity {
         public void onBindViewHolder(final MyViewHolder holder, int position) {
             Word item = getItemForPosition(position);
             holder.binding.setWord(item);
+            holder.binding.rowListId.setVisibility(Debug.isDBG ? View.VISIBLE : View.GONE);
             holder.binding.rowRoot.setOnClickListener(
                     v -> onRecyclerClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
-            holder.binding.rowRoot.setOnLongClickListener(
-                    v -> onRecyclerLongClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
+            if (Debug.isDBG) {
+                holder.binding.rowRoot.setOnLongClickListener(
+                        v -> onRecyclerLongClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
+            }
 
             if (!mHolderArray.contains(holder)) {
                 mHolderArray.add(holder);

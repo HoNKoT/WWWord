@@ -13,11 +13,17 @@
     <string name="dialog_import_title">Initializing…</string>
     <string name="dialog_import_done">Done</string>
 
+    <!--GroupListActivity-->
+    <string name="activity_list_group_label">Word Group List</string>
+
     <!--GroupEditActivity-->
-    <string name="activity_edit_group_label">ADD/EDIT Group</string>
+    <string name="activity_edit_group_label_add">Create Group</string>
+    <string name="activity_edit_group_label_edit">Edit %s Group</string>
     <string name="activity_edit_group_caption_name">Name</string>
 
     <!--WordEditActivity-->
+    <string name="activity_edit_word_label_add">Create Word into %s</string>
+    <string name="activity_edit_word_label_edit">Edit Word</string>
     <string name="activity_edit_word_caption_word">Word</string>
     <string name="activity_edit_word_caption_meaning">Meaning</string>
     <string name="activity_edit_word_caption_example">Example</string>
@@ -28,7 +34,7 @@
     <string name="activity_edit_word_button_register">REGISTER</string>
 
     <!--WordListActivity-->
-    <string name="activity_list_word_label">ADD/EDIT Word</string>
+    <string name="activity_list_word_label">%s\'s Word List</string>
     <string name="activity_list_word_menu_add">ADD WORD</string>
     <string name="activity_list_word_menu_preference">PREFERENCE</string>
 
