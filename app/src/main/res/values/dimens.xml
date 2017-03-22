@@ -7,4 +7,5 @@
     <dimen name="word_card_vertical_margin">4dp</dimen>
 
     <dimen name="activity_edit_word_caption_width">100dp</dimen>
+    <dimen name="searchView_margin">8dp</dimen>
 </resources>

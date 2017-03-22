@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import java.util.ArrayList;
 
@@ -70,6 +71,20 @@ public class WordListActivity extends BaseActivity {
         getComponent().inject(this);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list_word);
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                RecyclerAdapter adapter = (RecyclerAdapter) binding.list.getAdapter();
+                adapter.search(newText);
+                return true;
+            }
+        });
+        binding.list.requestFocus();
 
         Preference pref = preferenceDao.getPreference();
         if (pref == null) {
@@ -144,10 +159,10 @@ public class WordListActivity extends BaseActivity {
         private int count = 0;
         private SparseArray<Word> mCash = new SparseArray<>();
         private ArrayList<MyViewHolder> mHolderArray = new ArrayList<>();
+        private String searchWord = "";
 
-        private RecyclerAdapter() {
-            selector = wordDao.findAllByGroupId(groupId);
-            count = selector.count();
+        RecyclerAdapter() {
+            refreshData();
         }
 
         @Override
@@ -215,7 +230,7 @@ public class WordListActivity extends BaseActivity {
             return true;
         }
 
-        protected class MyViewHolder extends RecyclerView.ViewHolder {
+        class MyViewHolder extends RecyclerView.ViewHolder {
 
             private final RowWordBinding binding;
 
@@ -242,8 +257,9 @@ public class WordListActivity extends BaseActivity {
             mHandler.sendEmptyMessageDelayed(MEG_CHANGE_DISPLAY_LISTID, 500);
         }
 
-        public void remove(final int position) {
-            orma.transactionNonExclusiveSync(() -> wordDao.remove(getItemForPosition(position)));
+        private void remove(final int position) {
+            orma.transactionNonExclusiveSync(
+                    () -> wordDao.remove(getItemForPosition(position)));
 
             refreshData();
             notifyItemRemoved(position);
@@ -254,9 +270,15 @@ public class WordListActivity extends BaseActivity {
         }
 
         private void refreshData() {
-            selector = wordDao.findAllByGroupId(groupId);
+            if (searchWord.isEmpty()) {
+                selector = wordDao.findAllByGroupId(groupId);
+            } else {
+                selector = wordDao.likeQuery(searchWord, groupId);
+            }
             count = selector.count();
             mCash.clear();
+            notifyDataSetChanged();
+
         }
 
         private void refreshListId() {
@@ -272,11 +294,11 @@ public class WordListActivity extends BaseActivity {
             }
         }
 
-        public ItemTouchHelper.SimpleCallback getCallback() {
+        private ItemTouchHelper.SimpleCallback getCallback() {
             return callback;
         }
 
-        private ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -285,14 +307,14 @@ public class WordListActivity extends BaseActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 new AlertDialog.Builder(WordListActivity.this)
-                        .setTitle("CONFIRM")
-                        .setMessage("Are you sure what you want to delete?")
-                        .setPositiveButton("DELETE",
+                        .setTitle(R.string.dialog_confirm_title)
+                        .setMessage(R.string.dialog_confirm_msg_delete)
+                        .setPositiveButton(R.string.delete,
                                 (dialog1, which) -> {
                             int swipedPosition = viewHolder.getAdapterPosition();
                             remove(swipedPosition);
                         })
-                        .setNegativeButton("CANCEL",
+                        .setNegativeButton(R.string.cancel,
                                 (dialog12, which) -> {
                             // nothing to do
                             notifyDataSetChanged();
@@ -313,6 +335,11 @@ public class WordListActivity extends BaseActivity {
                 }
             }
         };
+
+        private void search(String value) {
+            searchWord = value;
+            refreshData();
+        }
     }
 
     @Override

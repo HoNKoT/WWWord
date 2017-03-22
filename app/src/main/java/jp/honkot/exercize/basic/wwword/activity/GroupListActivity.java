@@ -26,7 +26,7 @@ import jp.honkot.exercize.basic.wwword.R;
 import jp.honkot.exercize.basic.wwword.dao.GroupDao;
 import jp.honkot.exercize.basic.wwword.dao.PreferenceDao;
 import jp.honkot.exercize.basic.wwword.dao.WordDao;
-import jp.honkot.exercize.basic.wwword.databinding.ActivityListWordBinding;
+import jp.honkot.exercize.basic.wwword.databinding.ActivityListGroupBinding;
 import jp.honkot.exercize.basic.wwword.databinding.RowGroupBinding;
 import jp.honkot.exercize.basic.wwword.model.Group;
 import jp.honkot.exercize.basic.wwword.model.Group_Selector;
@@ -39,7 +39,7 @@ import jp.honkot.exercize.basic.wwword.util.SharedPreferenceUtil;
 public class GroupListActivity extends BaseActivity {
 
     RecyclerAdapter adapter;
-    ActivityListWordBinding binding;
+    ActivityListGroupBinding binding;
     ItemTouchHelper itemTouchHelper;
 
     private static final int REQUEST_CODE = 1;
@@ -64,7 +64,7 @@ public class GroupListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getComponent().inject(this);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_list_word);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_list_group);
 
         // initialize if needed
         if (SharedPreferenceUtil.isFirstBoot(this)) {

@@ -114,4 +114,11 @@ public class WordDao {
                 .group(value.getGroup())
                 .execute();
     }
+
+    public Word_Selector likeQuery(String value, final long groupId) {
+        return relation().selector().where(
+                Word_Schema.INSTANCE.word.getEscapedName() + " LIKE ?", "%" + value + "%")
+                .groupEq(groupId)
+                .orderByListIdAsc();
+    }
 }
