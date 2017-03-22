@@ -1,6 +1,8 @@
 package jp.honkot.exercize.basic.wwword.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,8 +37,8 @@ import jp.honkot.exercize.basic.wwword.util.NetworkUtil;
 
 public class WordEditActivity extends BaseActivity implements View.OnClickListener {
 
-    public static final String EXTRA_WORD_ID = "EXTRA_WORD_ID";
-    public static final String EXTRA_GROUP_ID = "EXTRA_GROUP_ID";
+    private static final String EXTRA_WORD_ID = "EXTRA_WORD_ID";
+    private static final String EXTRA_GROUP_ID = "EXTRA_GROUP_ID";
     private ActivityEditWordBinding binding;
     private Word mWord;
     private OxfordDictionary mOxfordDictionary;
@@ -304,5 +306,18 @@ public class WordEditActivity extends BaseActivity implements View.OnClickListen
 
             return view;
         }
+    }
+
+    public static Intent createIntent(Context context, long groupId) {
+        Intent intent = new Intent(context, WordEditActivity.class);
+        intent.putExtra(EXTRA_GROUP_ID, groupId);
+        return intent;
+    }
+
+    public static Intent createIntent(Context context, long groupId, long wordId) {
+        Intent intent = new Intent(context, WordEditActivity.class);
+        intent.putExtra(EXTRA_GROUP_ID, groupId);
+        intent.putExtra(EXTRA_WORD_ID, wordId);
+        return intent;
     }
 }

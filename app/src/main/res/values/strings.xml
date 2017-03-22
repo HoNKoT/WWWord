@@ -4,6 +4,11 @@
     <string name="api_id">50974be7</string>
     <string name="api_key">38da4c6505d9dab21093068b480c7097</string>
 
+    <!--Notification-->
+    <string name="notify_action_title">What is \'%s\' meaning?</string>
+    <string name="notify_action_check_list">Check List</string>
+    <string name="notify_action_check_word">Check Word</string>
+
     <!--Dialog-->
     <string name="dialog_import_title">Initializing…</string>
     <string name="dialog_import_done">Done</string>

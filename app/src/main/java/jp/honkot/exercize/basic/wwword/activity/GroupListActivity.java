@@ -193,9 +193,9 @@ public class GroupListActivity extends BaseActivity {
         }
 
         private void onRecyclerClicked(View view, int position) {
-            Intent intent = new Intent(getApplicationContext(), WordListActivity.class);
-            intent.putExtra(WordListActivity.EXTRA_GROUP_ID, getItemForPosition(position).getId());
-            startActivity(intent);
+            startActivity(WordListActivity.createIntent(
+                    getApplicationContext(),
+                    getItemForPosition(position).getId()));
         }
 
         protected class MyViewHolder extends RecyclerView.ViewHolder {

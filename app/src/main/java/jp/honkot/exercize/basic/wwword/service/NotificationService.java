@@ -16,6 +16,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.widget.RemoteViews;
 
 import java.util.Calendar;
 import java.util.Random;
@@ -23,7 +24,9 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import jp.honkot.exercize.basic.wwword.BaseApplication;
+import jp.honkot.exercize.basic.wwword.BuildConfig;
 import jp.honkot.exercize.basic.wwword.R;
+import jp.honkot.exercize.basic.wwword.activity.WordEditActivity;
 import jp.honkot.exercize.basic.wwword.activity.WordListActivity;
 import jp.honkot.exercize.basic.wwword.dao.PreferenceDao;
 import jp.honkot.exercize.basic.wwword.dao.WordDao;
@@ -40,6 +43,7 @@ public class NotificationService extends Service {
     private static int NOTIFY_ID = 777;
     private PendingIntent alarmIntent;
     private long mLastAlertSetTime = 0;
+    private static boolean isServiceDebug = BuildConfig.DEBUG && true;
 
     private static boolean working = false;
 
@@ -195,7 +199,16 @@ public class NotificationService extends Service {
             Calendar calendar = Calendar.getInstance();
             long now = System.currentTimeMillis();
             calendar.setTimeInMillis(now);
-            calendar.add(Calendar.MILLISECOND, (int)pref.getNotificationInterval());
+
+            if (isServiceDebug) {
+                calendar.add(Calendar.MILLISECOND, 10);
+                Debug.Log("set alarm 10sec later as debug mode");
+            } else {
+                Debug.Log("set alarm " + pref);
+                calendar.add(Calendar.MILLISECOND, (int)pref.getNotificationInterval());
+                Debug.Log("set alarm " + (int)pref.getNotificationInterval() + "sec later");
+            }
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                 manager.set(AlarmManager.RTC_WAKEUP,
                         calendar.getTimeInMillis(),
@@ -219,7 +232,7 @@ public class NotificationService extends Service {
     private void showWord() {
         Word_Selector relation = wordDao.findAllOfNeedNotify();
 
-        if (relation.isEmpty()) {
+        if (!relation.isEmpty()) {
             Random random = new Random(System.currentTimeMillis());
             int showListId = random.nextInt(relation.count() - 1);
             Word word = relation.get(showListId);
@@ -243,11 +256,97 @@ public class NotificationService extends Service {
                 builder.setPriority(Notification.PRIORITY_HIGH);
 
                 builder.setTicker(word.getWord()); // show status bar text
-                builder.setContentTitle(word.getWord()); // show notification title
-                builder.setContentText(word.getMeaning()); // show notification subtitle (1)  (2)isSubTitle
+                builder.setContentTitle(getString(R.string.notify_action_title, word.getWord()));
                 builder.setSmallIcon(R.mipmap.notification); //icon
                 Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
                 builder.setLargeIcon(bm);
+
+                RemoteViews customView = new RemoteViews(getPackageName(), android.R.layout.simple_list_item_2);
+                customView.setTextViewText(android.R.id.text1, word.getWord());
+                customView.setTextViewText(android.R.id.text2, word.getMeaning() + "\n" + word.getExample());
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+                    builder.setCustomBigContentView(customView);
+                } else {
+//                    builder.setContent(customView);
+                }
+
+                /*
+                 * Sets the big view "big text" style and supplies the
+                 * text (the user's reminder message) that will be displayed
+                 * in the detail area of the expanded notification.
+                 * These calls are ignored by the support library for
+                 * pre-4.1 devices.
+                 */
+                // set shortcut action to list
+                Intent listIntent = WordListActivity.createIntent(
+                        getApplicationContext(),
+                        word.getGroup().getId(),
+                        word.getListId());
+                PendingIntent piList = PendingIntent.getActivity(
+                        this,
+                        1,
+                        listIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+                // set shortcut action to edit word
+                Intent wordIntent = WordEditActivity.createIntent(
+                        getApplicationContext(),
+                        word.getGroup().getId(),
+                        word.getId());
+                PendingIntent piWord = PendingIntent.getActivity(
+                        this,
+                        2,
+                        wordIntent,
+                        PendingIntent.FLAG_CANCEL_CURRENT);
+
+                StringBuilder buf = new StringBuilder();
+                buf.append(word.getMeaning());
+                if (!word.getExample().isEmpty()) buf.append("\n").append(word.getExample());
+                if (!word.getDetail().isEmpty()) buf.append("\n").append(word.getDetail());
+
+                builder.setStyle(new Notification.BigTextStyle()
+                        .bigText(buf.toString()))
+                        .setContentIntent(piWord);
+//                        .addAction(R.drawable.ic_list_black_24dp,
+//                                getString(R.string.notify_action_check_list),
+//                                piList)
+//                        .addAction(R.drawable.ic_mode_edit_black_24dp,
+//                                getString(R.string.notify_action_check_word),
+//                                piWord);
+
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    // set shortcut action to list
+//                    Intent listIntent = WordListActivity.createIntent(
+//                            getApplicationContext(),
+//                            word.getGroup().getId(),
+//                            word.getListId());
+//                    PendingIntent piList = PendingIntent.getActivity(
+//                            this,
+//                            1,
+//                            listIntent,
+//                            PendingIntent.FLAG_CANCEL_CURRENT);
+//                    Notification.Action actionList = new Notification.Action.Builder(
+//                            R.drawable.ic_list_black_24dp,
+//                            getString(R.string.notify_action_check_list),
+//                            piList).build();
+//                    builder.addAction(actionList);
+//
+//                    // set shortcut action to edit word
+//                    Intent wordIntent = WordEditActivity.createIntent(
+//                            getApplicationContext(),
+//                            word.getGroup().getId(),
+//                            word.getId());
+//                    PendingIntent piWord = PendingIntent.getActivity(
+//                            this,
+//                            2,
+//                            wordIntent,
+//                            PendingIntent.FLAG_CANCEL_CURRENT);
+//                    Notification.Action action = new Notification.Action.Builder(
+//                            R.drawable.ic_mode_edit_black_24dp,
+//                            getString(R.string.notify_action_check_word),
+//                            piWord).build();
+//                    builder.addAction(action);
+//                }
 
                 builder.setAutoCancel(false);
                 Preference pref = preferenceDao.getPreference();

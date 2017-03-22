@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class Debug {
 
-    public static boolean isDBG = true;
+    public static boolean isDBG = false;
 
     public static void Log(String log) {
         Log.e("DLog", "### " + log);

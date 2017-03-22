@@ -1,5 +1,6 @@
 package jp.honkot.exercize.basic.wwword.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -43,7 +44,8 @@ public class WordListActivity extends BaseActivity {
 
     private static final int REQUEST_CODE = 1;
     public static final int RESULT_SUCCEEDED = 1;
-    public static final String EXTRA_GROUP_ID = "EXTRA_GROUP_ID";
+    private static final String EXTRA_GROUP_ID = "EXTRA_GROUP_ID";
+    private static final String EXTRA_LIST_ID = "EXTRA_LIST_ID";
     private long groupId;
 
     @Inject
@@ -88,6 +90,12 @@ public class WordListActivity extends BaseActivity {
 
         binding.list.setLayoutManager(new LinearLayoutManager(this));
         binding.list.setAdapter(adapter);
+
+        // scroll to list id the intent has
+        long listId = getIntent().getLongExtra(EXTRA_LIST_ID, 0);
+        if (listId > 0){
+            binding.list.scrollToPosition((int)(listId - 1));
+        }
 
         // set swipe animation
         itemTouchHelper = new ItemTouchHelper(adapter.getCallback());
@@ -180,10 +188,10 @@ public class WordListActivity extends BaseActivity {
         }
 
         private void onRecyclerClicked(View view, int position) {
-            Intent intent = new Intent(getApplicationContext(), WordEditActivity.class);
-            intent.putExtra(WordEditActivity.EXTRA_WORD_ID, getItemForPosition(position).getId());
-            intent.putExtra(WordEditActivity.EXTRA_GROUP_ID, groupId);
-            startActivity(intent);
+            startActivity(WordEditActivity.createIntent(
+                    getApplicationContext(),
+                    groupId,
+                    getItemForPosition(position).getId()));
         }
 
         private boolean onRecyclerLongClicked(View view, final int position) {
@@ -308,9 +316,10 @@ public class WordListActivity extends BaseActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent intentAdd = new Intent(this, WordEditActivity.class);
-                intentAdd.putExtra(WordEditActivity.EXTRA_GROUP_ID, groupId);
-                startActivityForResult(intentAdd, REQUEST_CODE);
+                startActivityForResult(WordEditActivity.createIntent(
+                        getApplicationContext(),
+                        groupId),
+                        REQUEST_CODE);
                 return true;
 
             case R.id.menu_preference:
@@ -321,5 +330,18 @@ public class WordListActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public static Intent createIntent(Context context, long groupId) {
+        Intent intent = new Intent(context, WordListActivity.class);
+        intent.putExtra(EXTRA_GROUP_ID, groupId);
+        return intent;
+    }
+
+    public static Intent createIntent(Context context, long groupId, long listId) {
+        Intent intent = new Intent(context, WordListActivity.class);
+        intent.putExtra(EXTRA_GROUP_ID, groupId);
+        intent.putExtra(EXTRA_LIST_ID, listId);
+        return intent;
     }
 }
