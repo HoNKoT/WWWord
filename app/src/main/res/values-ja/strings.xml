@@ -13,6 +13,7 @@
     <string name="notify_action_check_word">単語</string>
 
     <!--Dialog-->
+    <string name="dialog_import_title_file">CSV読み込み中</string>
     <string name="dialog_import_title">初期化中</string>
     <string name="dialog_import_done">完了</string>
 
@@ -40,6 +41,7 @@
     <string name="activity_list_word_label">%s</string>
     <string name="activity_list_word_menu_add">追加</string>
     <string name="activity_list_word_menu_preference">設定</string>
+    <string name="activity_list_word_menu_import">CSV読み込み</string>
 
     <!--PreferenceActivity-->
     <string name="activity_preference_label">設定</string>

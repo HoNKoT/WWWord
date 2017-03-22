@@ -1,6 +1,7 @@
 package jp.honkot.exercize.basic.wwword.activity;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -217,5 +218,10 @@ public class PreferenceActivity extends BaseActivity {
                     startActivity(new Intent(getActivity(), AboutActivity.class));
                     return false;
                 };
+    }
+
+    public static Intent createIntent(Context context) {
+        Intent intent = new Intent(context, PreferenceActivity.class);
+        return intent;
     }
 }

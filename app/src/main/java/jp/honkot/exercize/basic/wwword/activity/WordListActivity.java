@@ -45,8 +45,8 @@ public class WordListActivity extends BaseActivity {
     ActivityListWordBinding binding;
     ItemTouchHelper itemTouchHelper;
 
-    private static final int REQUEST_CODE = 1;
-    public static final int RESULT_SUCCEEDED = 1;
+    private static final int REQUEST_CODE_ADD = 1;
+    private static final int REQUEST_CODE_IMPORT = 2;
     private static final String EXTRA_GROUP_ID = "EXTRA_GROUP_ID";
     private static final String EXTRA_LIST_ID = "EXTRA_LIST_ID";
     private long groupId;
@@ -140,8 +140,22 @@ public class WordListActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_SUCCEEDED) {
+        if (requestCode == REQUEST_CODE_ADD && resultCode == RESULT_OK) {
             initialize();
+        } else if (requestCode == REQUEST_CODE_IMPORT && resultCode == RESULT_OK) {
+            String filePath = data.getExtras().getString(SelectCSVActivity.EXTRA_FILE_PATH);
+            ImportCSVUtil util = new ImportCSVUtil(this, wordDao);
+            util.readCSV(filePath, new ImportCSVUtil.OnReadFinishListener() {
+                @Override
+                public void onError() {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    initialize();
+                }
+            }, groupDao.findById(groupId));
         }
     }
 
@@ -345,7 +359,7 @@ public class WordListActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_menu, menu);
+        inflater.inflate(R.menu.list_word_menu, menu);
         return true;
     }
 
@@ -357,12 +371,17 @@ public class WordListActivity extends BaseActivity {
                 startActivityForResult(WordEditActivity.createIntent(
                         getApplicationContext(),
                         groupId),
-                        REQUEST_CODE);
+                        REQUEST_CODE_ADD);
                 return true;
 
             case R.id.menu_preference:
-                Intent intentPreference = new Intent(this, PreferenceActivity.class);
-                startActivity(intentPreference);
+                startActivity(PreferenceActivity.createIntent(this));
+                return true;
+
+            case R.id.menu_import:
+                startActivityForResult(
+                        SelectCSVActivity.createIntent(this),
+                        REQUEST_CODE_IMPORT);
                 return true;
 
             default:

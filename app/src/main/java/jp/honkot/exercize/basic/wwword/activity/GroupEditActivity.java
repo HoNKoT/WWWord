@@ -1,5 +1,7 @@
 package jp.honkot.exercize.basic.wwword.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.text.Editable;
@@ -108,11 +110,16 @@ public class GroupEditActivity extends BaseActivity implements View.OnClickListe
             }
 
             if (result != 0) {
-                setResult(GroupListActivity.RESULT_SUCCEEDED);
+                setResult(RESULT_OK);
                 finish();
             } else {
                 // error
             }
         }
+    }
+
+    public static Intent createIntent(Context context) {
+        Intent intent = new Intent(context, GroupEditActivity.class);
+        return intent;
     }
 }

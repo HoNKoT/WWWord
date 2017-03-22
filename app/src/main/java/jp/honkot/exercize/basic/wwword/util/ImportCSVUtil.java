@@ -9,6 +9,8 @@ import android.widget.Toast;
 import com.github.gfx.android.orma.SingleAssociation;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,16 +46,17 @@ public class ImportCSVUtil {
         mWordDao = wordDao;
     }
 
-    public void readCSV(final int resId, final OnReadFinishListener listener, final Group group) {
-
+    public void readCSV(final String path, final OnReadFinishListener listener, final Group group) {
+        final File file = new File(path);
         final ProgressDialog.Builder builder = new ProgressDialog.Builder(mContext);
         builder.setTitle(R.string.dialog_import_title);
+        builder.setMessage(file.getName());
         final AlertDialog dialog = builder.show();
 
         // Here is observable what doing in background.
         Observable<String> observable = Observable.create((ObservableEmitter<String> emitter) -> {
             try {
-                innerReadCSV(resId, group);
+                innerReadCSV(new FileInputStream(file), group);
                 emitter.onNext("Done");
 
             } catch (Exception e) {
@@ -96,10 +99,63 @@ public class ImportCSVUtil {
                 }));
     }
 
-    private void innerReadCSV(final int resId, final Group group) {
+    public void readCSV(final int resId, final OnReadFinishListener listener, final Group group) {
+
+        final ProgressDialog.Builder builder = new ProgressDialog.Builder(mContext);
+        builder.setTitle(R.string.dialog_import_title);
+        final AlertDialog dialog = builder.show();
+
+        // Here is observable what doing in background.
+        Observable<String> observable = Observable.create((ObservableEmitter<String> emitter) -> {
+            try {
+                final InputStream inputStream = mContext.getResources().openRawResource(resId);
+                innerReadCSV(inputStream, group);
+                emitter.onNext("Done");
+
+            } catch (Exception e) {
+                emitter.onError(e);
+            }
+//            if (response.isSuccessful()) {
+//                nextPage++;
+//                List<VisitReport> visitReports = response.body();
+//                emitter.onNext(visitReports);
+//            } else {
+//                emitter.onError(null);
+//            }
+        });
+
+        mDisposable.add(observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<String>() {
+                    @Override
+                    public void onComplete() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        finish();
+                        Log.e("ImportCSVUtil", "Something error occurred " + e.getMessage());
+                        e.getStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(String msg) {
+                        finish();
+                    }
+
+                    private void finish() {
+                        dialog.dismiss();
+                        Toast.makeText(mContext, R.string.dialog_import_done, Toast.LENGTH_SHORT).show();
+                        if (listener != null) listener.onFinish();
+                    }
+                }));
+    }
+
+    private void innerReadCSV(final InputStream inputStream, final Group group) {
         //this requires there to be a dictionary.csv file in the raw directory
         //in this case you can swap in whatever you want
-        final InputStream inputStream = mContext.getResources().openRawResource(resId);
+
         final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         long startListId = mWordDao.getMaximumListId(group) + 1;
 

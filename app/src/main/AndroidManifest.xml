@@ -49,6 +49,11 @@
             android:name=".activity.LibsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Translucent"/>
+
+        <activity
+            android:name=".activity.SelectCSVActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

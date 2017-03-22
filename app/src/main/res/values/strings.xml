@@ -14,8 +14,12 @@
     <string name="notify_action_check_word">Check Word</string>
 
     <!--Dialog-->
+    <string name="dialog_import_title_file">Importing…</string>
     <string name="dialog_import_title">Initializing…</string>
     <string name="dialog_import_done">Done</string>
+
+    <!--SelectCSVActivity-->
+    <string name="activity_select_csv_label">Select CSV</string>
 
     <!--GroupListActivity-->
     <string name="activity_list_group_label">Word Group List</string>
@@ -41,6 +45,7 @@
     <string name="activity_list_word_label">%s\'s Word List</string>
     <string name="activity_list_word_menu_add">ADD WORD</string>
     <string name="activity_list_word_menu_preference">PREFERENCE</string>
+    <string name="activity_list_word_menu_import">Import CSV</string>
 
     <!--PreferenceActivity-->
     <string name="activity_preference_label">Settings</string>

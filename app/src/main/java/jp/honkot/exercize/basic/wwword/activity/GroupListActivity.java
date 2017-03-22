@@ -128,7 +128,7 @@ public class GroupListActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_SUCCEEDED) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             initialize();
         }
     }
@@ -290,7 +290,7 @@ public class GroupListActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_menu, menu);
+        inflater.inflate(R.menu.list_group_menu, menu);
         return true;
     }
 
@@ -299,13 +299,11 @@ public class GroupListActivity extends BaseActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_add:
-                Intent intentAdd = new Intent(this, GroupEditActivity.class);
-                startActivityForResult(intentAdd, REQUEST_CODE);
+                startActivity(GroupEditActivity.createIntent(this));
                 return true;
 
             case R.id.menu_preference:
-                Intent intentPreference = new Intent(this, PreferenceActivity.class);
-                startActivity(intentPreference);
+                startActivity(PreferenceActivity.createIntent(this));
                 return true;
 
             default:
