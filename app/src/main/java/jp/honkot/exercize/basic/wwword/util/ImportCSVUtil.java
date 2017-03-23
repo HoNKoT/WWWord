@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -159,12 +160,61 @@ public class ImportCSVUtil {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         long startListId = mWordDao.getMaximumListId(group) + 1;
 
+        final String WORD = "WORD";
+        final String MEANING = "MEANING";
+        final String EXAMPLE = "EXAMPLE";
+        final String DETAIL = "DETAIL";
+        final String MEMO = "MEMO";
+        ArrayList<String> defaultCaption = new ArrayList<>();
+        defaultCaption.add(WORD);
+        defaultCaption.add(MEANING);
+        defaultCaption.add(EXAMPLE);
+        defaultCaption.add(DETAIL);
+        defaultCaption.add(MEMO);
+
+        int wordIndex = -1;
+        int meaningIndex = -1;
+        int exampleIndex = -1;
+        int detailIndex = -1;
+        int memoIndex = -1;
+
         try {
             String word;
+
+            boolean firstRow = true;
 
             while ((word = reader.readLine()) != null) {
                 String[] words = word.split(",");
                 if (words.length == 0) continue;
+
+                if (firstRow) {
+                    boolean isCaption = false;
+                    for (int i = 0; i < words.length; i++) {
+                        if (defaultCaption.contains(words[i])) {
+                            isCaption = true;
+                            switch (words[i]) {
+                                case WORD: wordIndex = i; break;
+                                case MEANING: meaningIndex = i; break;
+                                case EXAMPLE: exampleIndex = i; break;
+                                case DETAIL: detailIndex = i; break;
+                                case MEMO: memoIndex = i; break;
+                            }
+                        }
+                    }
+                    firstRow = false;
+
+                    if (isCaption) {
+                        continue;
+
+                    } else {
+                        // input default
+                        wordIndex = 0;
+                        meaningIndex = 1;
+                        exampleIndex = 2;
+                        detailIndex = 3;
+                        memoIndex = 4;
+                    }
+                }
 
                 for (int i = 0; i < words.length; i++) {
                     words[i] = words[i].trim(); // eliminate space of start and end
@@ -174,9 +224,11 @@ public class ImportCSVUtil {
                 }
 
                 Word newWord = new Word();
-                if (words.length > 0) newWord.setWord(words[0]);
-                if (words.length > 1) newWord.setMeaning(words[1]);
-                if (words.length > 2) newWord.setExample(words[2]);
+                if (words.length > wordIndex && wordIndex >= 0) newWord.setWord(words[wordIndex]);
+                if (words.length > meaningIndex && meaningIndex >= 0) newWord.setMeaning(words[meaningIndex]);
+                if (words.length > exampleIndex && exampleIndex >= 0) newWord.setExample(words[exampleIndex]);
+                if (words.length > detailIndex && detailIndex >= 0) newWord.setDetail(words[detailIndex]);
+                if (words.length > memoIndex && memoIndex >= 0) newWord.setMemo(words[memoIndex]);
                 newWord.setListId(startListId++);
                 newWord.setGroup(SingleAssociation.just(group));
                 mWordDao.insert(newWord);
