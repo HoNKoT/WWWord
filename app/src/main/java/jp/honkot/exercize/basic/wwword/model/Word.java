@@ -42,6 +42,11 @@ public class Word extends BaseModel {
     @NonNull
     private String audioFile;
 
+    /**
+     * For Word List whether showing up detail or not
+     */
+    public boolean showDetail = false;
+
     public Word() {
         this.word = "";
         this.meaning = "";

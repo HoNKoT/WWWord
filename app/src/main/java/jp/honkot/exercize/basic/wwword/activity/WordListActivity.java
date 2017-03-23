@@ -190,13 +190,13 @@ public class WordListActivity extends BaseActivity {
         public void onBindViewHolder(final MyViewHolder holder, int position) {
             Word item = getItemForPosition(position);
             holder.binding.setWord(item);
+            holder.binding.rowDetailGroup.setVisibility(item.showDetail ? View.VISIBLE : View.GONE);
             holder.binding.rowListId.setVisibility(Debug.isDBG ? View.VISIBLE : View.GONE);
             holder.binding.rowRoot.setOnClickListener(
                     v -> onRecyclerClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
-            if (Debug.isDBG) {
-                holder.binding.rowRoot.setOnLongClickListener(
-                        v -> onRecyclerLongClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
-            }
+            holder.binding.rowRoot.setOnLongClickListener(
+                    v -> onRecyclerLongClicked(holder.binding.getRoot(), holder.getLayoutPosition()));
+            holder.setPosition(position);
 
             if (!mHolderArray.contains(holder)) {
                 mHolderArray.add(holder);
@@ -228,47 +228,65 @@ public class WordListActivity extends BaseActivity {
         }
 
         private void onRecyclerClicked(View view, int position) {
+            Word word = getItemForPosition(position);
+            word.showDetail = !word.showDetail;
+            for (MyViewHolder holder : mHolderArray) {
+                if (holder.binding.getRoot().equals(view)) {
+                    holder.binding.rowDetailGroup.setVisibility(
+                            word.showDetail ? View.VISIBLE : View.GONE);
+                    break;
+                }
+            }
+
+            Message msg = mHandler.obtainMessage(MSG_SCROLL_TO);
+            msg.arg1 = position;
+            mHandler.sendMessageDelayed(msg, 100);
+        }
+
+        private void scrollTo(int position) {
+            MyViewHolder holder = null;
+            for (MyViewHolder tmp : mHolderArray) {
+                if (tmp.position == position) {
+                    holder = tmp;
+                    break;
+                }
+            }
+
+            if (holder == null) return;
+
+            View view = holder.binding.getRoot();
+            int offset = 12; // margin
+            int listHeight = binding.list.getHeight();
+            if (view.getTop() < binding.list.getScrollY()) {
+                // the clicked view is hiding on top
+                binding.list.smoothScrollBy(0, view.getTop() - offset);
+            } else if (view.getBottom() > binding.list.getScrollY() + listHeight) {
+                // the clicked view is hiding on bottom
+                binding.list.smoothScrollBy(0, view.getBottom() - listHeight + offset);
+            }
+        }
+
+        private boolean onRecyclerLongClicked(View view, final int position) {
             startActivity(WordEditActivity.createIntent(
                     getApplicationContext(),
                     groupId,
                     getItemForPosition(position).getId()));
-        }
-
-        private boolean onRecyclerLongClicked(View view, final int position) {
-            new AlertDialog.Builder(WordListActivity.this)
-                    .setTitle("ACTION")
-                    .setMessage("Choose menu you want to do")
-                    .setPositiveButton("Add", (dialog, which) -> addItem(position))
-                    .setNegativeButton("Delete", (dialog, which) -> remove(position))
-                    .show();
             return true;
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
 
             private final RowWordBinding binding;
+            private long position;
 
             private MyViewHolder(RowWordBinding binding) {
                 super(binding.getRoot());
                 this.binding = binding;
             }
-        }
 
-        private void addItem(int position) {
-            final Word word = new Word();
-            word.setListId(position + 1);
-            word.setWord("Word #" + Integer.toHexString(this.hashCode()));
-            word.setMeaning("Meaning #" + Integer.toHexString(this.hashCode()));
-            word.setExample("Detail #" + Integer.toHexString(this.hashCode()));
-            word.setMemo("Memo #" + Integer.toHexString(this.hashCode()));
-            orma.transactionNonExclusiveSync(() -> wordDao.insert(word));
-
-            refreshData();
-            notifyItemInserted(position);
-
-            // The database selector does not change soon,
-            // so the time to sync display info should be delayed just a second.
-            mHandler.sendEmptyMessageDelayed(MEG_CHANGE_DISPLAY_LISTID, 500);
+            public void setPosition(int position) {
+                this.position = position;
+            }
         }
 
         private void remove(final int position) {
@@ -280,7 +298,7 @@ public class WordListActivity extends BaseActivity {
 
             // The database selector does not change soon,
             // so the time to sync display info should be delayed just a second.
-            mHandler.sendEmptyMessageDelayed(MEG_CHANGE_DISPLAY_LISTID, 500);
+            mHandler.sendEmptyMessageDelayed(MSG_CHANGE_DISPLAY_LISTID, 500);
         }
 
         private void refreshData() {
@@ -337,14 +355,19 @@ public class WordListActivity extends BaseActivity {
             }
         };
 
-        private final int MEG_CHANGE_DISPLAY_LISTID = 0;
+        private final int MSG_CHANGE_DISPLAY_LISTID = 0;
+        private final int MSG_SCROLL_TO = 1;
         private Handler mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case MEG_CHANGE_DISPLAY_LISTID:
+                    case MSG_CHANGE_DISPLAY_LISTID:
                         refreshListId();
+                        break;
+
+                    case MSG_SCROLL_TO:
+                        scrollTo(msg.arg1);
                         break;
                 }
             }

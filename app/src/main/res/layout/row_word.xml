@@ -2,35 +2,64 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable name="word" type="jp.honkot.exercize.basic.wwword.model.Word"/>
+        <variable name="view" type="android.view.View"/>
     </data>
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/word_card_vertical_margin"
         android:layout_marginBottom="@dimen/word_card_vertical_margin"
         android:layout_marginLeft="@dimen/word_card_horizontal_margin"
-        android:layout_marginRight="@dimen/word_card_horizontal_margin"
-        android:background="@drawable/divider">
+        android:layout_marginRight="@dimen/word_card_horizontal_margin">
         <LinearLayout
             android:id="@+id/rowRoot"
+            android:padding="@dimen/activity_horizontal_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin"
             android:clickable="true"
             android:focusable="true"
-            android:orientation="horizontal"
-            android:background="?android:attr/selectableItemBackground">
-            <TextView
-                android:id="@+id/rowListId"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@{word.getDisplayListId()}" />
-            <TextView
-                android:id="@+id/rowWord"
+            android:background="?android:attr/selectableItemBackground"
+            android:orientation="vertical">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@{word.getWord()}" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/rowListId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@{word.displayListId}" />
+                <TextView
+                    android:id="@+id/rowWord"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@{word.word}" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/rowDetailGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/rowMeaning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{word.meaning}"/>
+                <TextView
+                    android:id="@+id/rowExample"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{word.example}"
+                    android:visibility="@{word.example.empty ? view.GONE : view.VISIBLE}"/>
+                <TextView
+                    android:id="@+id/rowDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{word.detail}"
+                    android:visibility="@{word.detail.empty ? view.GONE : view.VISIBLE}"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
 </layout>
