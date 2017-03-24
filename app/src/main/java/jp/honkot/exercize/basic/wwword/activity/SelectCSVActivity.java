@@ -31,6 +31,8 @@ public class SelectCSVActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.simple_list);
 
+        getSupportActionBar().setTitle(R.string.activity_select_csv_label);
+
         final String[] DOC_PROJECTION = new String[]{"_id", "_data", "mime_type", "_size", "date_added", "title"};
         Cursor cursor = getContentResolver().query(
                 MediaStore.Files.getContentUri("external"),

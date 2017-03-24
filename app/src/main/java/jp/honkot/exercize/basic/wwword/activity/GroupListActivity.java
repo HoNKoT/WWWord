@@ -177,16 +177,19 @@ public class GroupListActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            if (selector != null) {
-                return count;
-            } else {
-                return 0;
-            }
+            //TODO fix タイミングによってずれちゃう
+//            if (selector != null) {
+//                return count;
+//            } else {
+//                return 0;
+//            }
+            return selector.count();
         }
 
         @Nullable
         private Group getItemForPosition(int position) {
-            if (position < count) {
+            //TODO fix タイミングによってずれちゃう
+            if (position < selector.count()) {
                 Group cashWord = mCash.get(position);
                 if (cashWord == null) {
                     cashWord = selector.get(position);
@@ -216,7 +219,8 @@ public class GroupListActivity extends BaseActivity {
         }
 
         private void remove(final int position) {
-            orma.transactionNonExclusiveSync(() -> groupDao.remove(getItemForPosition(position)));
+            orma.transactionNonExclusiveSync(
+                    () -> groupDao.remove(getItemForPosition(position)));
 
             refreshData();
             notifyItemRemoved(position);

@@ -205,16 +205,18 @@ public class WordListActivity extends BaseActivity {
 
         @Override
         public int getItemCount() {
-            if (selector != null) {
-                return count;
-            } else {
-                return 0;
-            }
+//            if (selector != null) {
+//                return count;
+//            } else {
+//                return 0;
+//            }
+            return selector.count();
         }
 
         @Nullable
         private Word getItemForPosition(int position) {
-            if (position < count) {
+            //TODO fix タイミングによってずれちゃう
+            if (position < selector.count()) {
                 Word cashWord = mCash.get(position);
                 if (cashWord == null) {
                     cashWord = selector.get(position);
